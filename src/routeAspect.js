@@ -4,27 +4,7 @@ import {createAspect,
 import StateRouter                from './StateRouter';
 import isFunction                 from 'lodash.isfunction';
 
-/**
- * @typedef {Aspect} routeAspect
- * 
- * The routeAspect is a **feature-u** plugin that facilitates StateRouter
- * integration to your features.
- * 
- * To use this aspect:
- * 
- *  1. Configure the `routeAspect.fallbackElm` representing a
- *     SplashScreen (of sorts) when no routes are in effect.
- *
- *  2. Register `routeAspect` as one of your aspects to
- *     **feature-u**'s `launchApp()`.
- *  
- *  3. Specify a `route` `createFeature()` named parameter (_in any
- *     of your features that maintain routes_) referencing a routeCB
- *     or routeCB[] defined by `featureRoute()`.
- * 
- * **Please refer to the User Docs** for a complete description with
- * examples.
- */
+// NOTE: See README for complete description
 export default createAspect({
   name: 'route',
   validateConfiguration,
