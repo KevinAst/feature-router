@@ -1,4 +1,4 @@
-# feature-router - *Feature Based Navigation (using state)*
+# feature-router - *Feature Based Navigation (using redux state)*
 
 **feature-router** is your [feature-u] integration point to **Feature
 Routes**!  It promotes the [`routeAspect`] _(a [feature-u] plugin)_
@@ -120,7 +120,7 @@ for [feature-u].
    **src/app.js**
    ```js
    import {launchApp}      from 'feature-u';
-   import {routeAspect}    from 'feature-router;  // **1**
+   import {routeAspect}    from 'feature-router'; // **1**
    import {reducerAspect}  from 'feature-redux';  // **3**
    import SplashScreen     from '~/util/comp/SplashScreen';
    import features         from './feature';
