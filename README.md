@@ -70,7 +70,6 @@ for [feature-u].
 - [Interface Points](#interface-points)
   * [Input](#input)
   * [Exposure](#exposure)
-  * [Supplementing rootAppElm DOM](#supplementing-rootappelm-dom)
 - [API](#api)
   - [`routeAspect: Aspect`](#routeaspect-aspect)
   - [`featureRoute({content, [priority]}): routeCB`](#featureroute)
@@ -439,44 +438,6 @@ and outputs_) are documented here.
   it's `<StateRouter>` component at the root of your application DOM.
   This allows your `Feature.route` hooks to specify the active screen,
   based on your application state.
-
-### Supplementing rootAppElm DOM
-
-TODO: ?? this should be obsolete after the appropriate refactor
-
-Normally, features that wish to supplement the rootAppElm DOM do so
-through the `Feature.appWillStart()` life-cycle hook.  This is
-problematic when using the [`routeAspect`].  This section discusses why
-this is the case, and highlights an alternative solution.
-
-As mentioned above, the [`routeAspect`] promotes itself by injecting the
-`StateRouter` component at the root of your application DOM.
-
-It is important to understand that the `StateRouter` component does NOT
-support children.  The reason for this is that it ultimately dictates
-the complete rendered content through it's [`routeCB()`] API, so
-statically defined children do NOT have meaning.
-
-Actually the rootAppElm DOM is ultimately defined through a
-combination of [`Feature`]/[`Aspect`] DOM injections in the following order:
-
- 1. `Feature.appWillStart({app, curRootAppElm})`
- 2. `Aspect.injectRootAppElm(app, activeFeatures, curRootAppElm)`
-
-As a result, if a [`Feature`] attempts to supplement the rootAppElm
-(through the normal `Feature.appWillStart()` life-cycle hook), the
-[`routeAspect`] will reject it because it does not support children.
-
-To resolve this, the [`routeAspect`] defines it's own [`Feature`] API to
-supplement the rootAppElm DOM, that is seeded with the `StateRouter`
-component:
-
-```js
- + Feature.injectRootAppElmForStateRouter(app, curRootAppElm): newRootAppElm
-```
-
-If you are using the [`routeAspect`], this API should be used to
-supplement the rootAppElm DOM.
 
 
 ## API
