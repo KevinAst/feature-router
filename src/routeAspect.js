@@ -1,8 +1,16 @@
 import React                      from 'react';     // peerDependencies
 import {createAspect,
-        addBuiltInFeatureKeyword} from 'feature-u'; // peerDependencies
+        extendAspectProperty}     from 'feature-u'; // peerDependency: 
 import StateRouter                from './StateRouter';
 import isFunction                 from 'lodash.isfunction';
+
+// register feature-router proprietary Aspect APIs
+// ... required to pass feature-u validation
+// ... must occur globally (during our in-line code expansion)
+//     guaranteeing the new API is available during feature-u validation
+extendAspectProperty('fallbackElm');             // Aspect.fallbackElm: reactElm           ... AI: technically this if for reducerAspect only (if the API ever supports this)
+extendAspectProperty('componentWillUpdateHook'); // Aspect.componentWillUpdateHook(): void ... AI: technically this if for reducerAspect only (if the API ever supports this)
+
 
 // NOTE: See README for complete description
 export default createAspect({
@@ -10,12 +18,8 @@ export default createAspect({
   validateConfiguration,
   validateFeatureContent,
   assembleFeatureContent,
-  injectRootAppElm,
+  initialRootAppElm,
 });
-
-
-// register our OWN Feature API: injectRootAppElmForStateRouter(app, curRootAppElm): newRootAppElm
-addBuiltInFeatureKeyword('injectRootAppElmForStateRouter');
 
 
 /**
@@ -119,47 +123,30 @@ function assembleFeatureContent(app, activeFeatures) {
 
 
 /**
- * Inject our StateRouter component at the root app element.
+ * Inject our `<StateRouter>` in the `rootAppElm`.
+ *
+ * We use `initialRootAppElm()` because `<StateRouter>` does NOT
+ * support children (by design).
  *
  * @param {App} app the App object used in feature cross-communication.
  * 
- * @param {Feature[]} activeFeatures - The set of active (enabled)
- * features that comprise this application.  This can be used in an
- * optional Aspect/Feature cross-communication.  As an example, an Xyz
- * Aspect may define a Feature API by which a Feature can inject DOM
- * in conjunction with the Xyz Aspect DOM injection.
- * 
  * @param {reactElm} curRootAppElm - the current react app element root.
  *
- * @return {reactElm} our StateRouter element.
+ * @return {reactElm} rootAppElm seeded with our `<StateRouter>`.
  *
  * @private
  */
-function injectRootAppElm(app, activeFeatures, curRootAppElm) {
+function initialRootAppElm(app, curRootAppElm) {
   // insure we don't clober any supplied content
   // ... by design, <StateRouter> doesn't support children
   if (curRootAppElm) {
     throw new Error('*** ERROR*** Please register routeAspect (from feature-router) before other Aspects ' +
-                    'that inject content in the root app elm ... <StateRouter> does NOT support children.');
+                    'that inject content in the rootAppElm ... <StateRouter> does NOT support children.');
   }
 
-  // seed our routerRootAppElm with our StateRouter
-  let routerRootAppElm = <StateRouter routes={this.routes}
-                                      fallbackElm={this.fallbackElm}
-                                      componentWillUpdateHook={this.componentWillUpdateHook}
-                                      namedDependencies={{app}}/>;
-
-  // allow features to suplement this top-level router
-  // ... through our OWN Feature API: injectRootAppElmForStateRouter(app, curRootAppElm): newRootAppElm
-  routerRootAppElm = activeFeatures.reduce( (cur_routerRootAppElm, feature) => {
-    if (feature.injectRootAppElmForStateRouter) {
-      return feature.injectRootAppElmForStateRouter(app, cur_routerRootAppElm);
-    }
-    else {
-      return cur_routerRootAppElm;
-    }
-  }, routerRootAppElm );
-
-  // that's all folks
-  return routerRootAppElm;
+  // seed the rootAppElm with our StateRouter
+  return <StateRouter routes={this.routes}
+                      fallbackElm={this.fallbackElm}
+                      componentWillUpdateHook={this.componentWillUpdateHook}
+                      namedDependencies={{app}}/>;
 }
