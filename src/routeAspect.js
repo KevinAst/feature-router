@@ -4,18 +4,11 @@ import {createAspect,
 import StateRouter                from './StateRouter';
 import isFunction                 from 'lodash.isfunction';
 
-// register feature-router proprietary Aspect APIs
-// ... required to pass feature-u validation
-// ... must occur globally (during our in-line code expansion)
-//     guaranteeing the new API is available during feature-u validation
-extendAspectProperty('fallbackElm');             // Aspect.fallbackElm: reactElm           ... AI: technically this if for reducerAspect only (if the API ever supports this)
-extendAspectProperty('componentWillUpdateHook'); // Aspect.componentWillUpdateHook(): void ... AI: technically this if for reducerAspect only (if the API ever supports this)
-
 
 // NOTE: See README for complete description
 export default createAspect({
   name: 'route',
-  validateConfiguration,
+  genesis,
   validateFeatureContent,
   assembleFeatureContent,
   initialRootAppElm,
@@ -24,6 +17,11 @@ export default createAspect({
 
 /**
  * Validate self's required configuration.
+ *
+ * ALSO: Register feature-redux proprietary Aspect APIs (required to pass
+ * feature-u validation).
+ * This must occur early in the life-cycle (i.e. this method) to
+ * guarantee the new API is available during feature-u validation.
  *
  * NOTE: To better understand the context in which any returned
  *       validation messages are used, feature-u will prefix them
@@ -34,7 +32,12 @@ export default createAspect({
  *
  * @private
  */
-function validateConfiguration() {
+function genesis() {
+  // register feature-redux proprietary Aspect APIs
+  extendAspectProperty('fallbackElm');             // Aspect.fallbackElm: reactElm           ... AI: technically this if for reducerAspect only (if the API ever supports this)
+  extendAspectProperty('componentWillUpdateHook'); // Aspect.componentWillUpdateHook(): void ... AI: technically this if for reducerAspect only (if the API ever supports this)
+
+  // validation
   return this.fallbackElm ? null : `the ${this.name} aspect requires fallbackElm to be configured (at run-time)!`;
 }
 
