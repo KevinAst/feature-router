@@ -280,7 +280,7 @@ Here is a route for an `Eateries` feature (_displaying a list of
 restaurants_) that employs two separate [`routeCB()`]s with varying
 priorities:
 
-**`src/feature/startup/index.js`**
+**`src/feature/eateries/route.js`**
 ```js
 import React               from 'react';
 import {createFeature}     from 'feature-u';
