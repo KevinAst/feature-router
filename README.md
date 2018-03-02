@@ -73,6 +73,7 @@ for [feature-u].
 - [Interface Points](#interface-points)
   * [Input](#input)
   * [Exposure](#exposure)
+  * [Error Conditions](#error-conditions)
 - [API](#api)
   - [`routeAspect: Aspect`](#routeaspect-aspect)
   - [`featureRoute({content, [priority]}): routeCB`](#featureroute)
@@ -441,6 +442,57 @@ and outputs_) are documented here.
   it's `<StateRouter>` component at the root of your application DOM.
   This allows your `Feature.route` hooks to specify the active screen,
   based on your application state.
+
+
+### Error Conditions
+
+- **routeAspect Placement** _(Aspect Order)_
+
+  The `routeAspect` must be ordered before other aspects that inject
+  content in the rootAppElm (i.e. the Aspects passed to
+  [`launchApp()`]).  The reason for this is that `<StateRouter>` _(the
+  underlying utility component)_ does NOT support children (by design).
+
+  When **feature-router** detects this scenario _(requiring action by
+  you)_, it will throw the following exception:
+
+  ```
+  *** ERROR*** Please register routeAspect (from feature-router) 
+               before other Aspects that inject content in the rootAppElm
+               ... <StateRouter> does NOT support children.
+  ```
+
+- **NO Routes in Features**
+
+  When **feature-router** detects that no routes have been specified by
+  any of your features, it will (by default) throw the following
+  exception:
+
+  ```
+  ***ERROR*** feature-router found NO routes within your features
+              ... did you forget to register Feature.route aspects in your features?
+              (please refer to the feature-router docs to see how to override this behavior).
+  ```
+
+  Most likely this should in fact be considered an error _(for example
+  you neglected to specify the routes within your features)_.  **The
+  reasoning is**: _why would you not specify any routes if your using
+  feature-router?_
+
+  You can change this behavior through the following configuration:
+
+  ```js
+  routeAspect.allowNoRoutes$ = true;
+  ```
+
+  With this option enabled, when no routes are found, feature-router
+  will simply NOT be configured (accompanied with a WARNING logging
+  probe).
+
+  You can also specify your own array of routes in place of the `true`
+  value, which will be used ONLY in the scenario where no routes were
+  specified by your features.
+
 
 
 ## API

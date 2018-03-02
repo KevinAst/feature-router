@@ -1,5 +1,9 @@
-import React      from 'react';       // peerDependencies
-import {connect}  from 'react-redux'; // peerDependencies
+import React       from 'react';       // peerDependencies
+import {connect}   from 'react-redux'; // peerDependencies
+import {launchApp} from 'feature-u';   // peerDependency ... strictly to tap into logging ... logf()
+
+// our logger (integrated/activated via feature-u)
+export const logf = launchApp.diag.logf.newLogger('- ***feature-router*** <StateRouter>: ');
 
 /**
  * A top-level React component that serves as a simple router, driven
@@ -10,11 +14,11 @@ import {connect}  from 'react-redux'; // peerDependencies
  *       hooks, used by the optional componentWillUpdateHook property
  *       (initially developed to support ReactNative animation).
  */
-class StateRouter extends React.Component {
+export class StateRouter extends React.Component { // NOTE: this "named" export if for testing purposes only
 
   constructor(props) {
     super(props);
-    // console.log(`xx constructing StateRouter ONLY ONCE .. here are my props: `, Object.keys(this.props));
+    logf('Instantiating <StateRouter> with props: ', Object.keys(this.props));
 
     // re-order our routes in their execution order
     const routes = this.props.routes;
@@ -25,14 +29,16 @@ class StateRouter extends React.Component {
       r2.routePriority - r1.routePriority || // ... FIRST:  routePriority (decending)
       r1.originalOrder - r2.originalOrder    // ... SECOND: registration order (ascending)
     ));
-    // console.log('xx StateRouter route order:')
-    // routes.forEach( (route, indx) => console.log(`xx   ${indx+1}: ${route.featureName}: ${route.routePriority}`) );
+
+    const hookSummary = routes.map( (route, indx) => `\n  ${indx+1}: Feature.name:${route.featureName} with priority: ${route.routePriority}` );
+    logf(`route order ...${hookSummary}`);
   }
 
   componentWillUpdate() {
     // optionally invoke the componentWillUpdateHook (when specified)
     // ... initially developed to support ReactNative animation
     if (this.props.componentWillUpdateHook) {
+      logf('running client specified componentWillUpdateHook()'); // AI: is this too much logging? ... however: only when enabled
       this.props.componentWillUpdateHook();
     }
   }
@@ -48,11 +54,14 @@ class StateRouter extends React.Component {
     // apply routes in order of 1: routePriority, 2: registration order (within same priority)
     for (const route of routes) {
       const content = route({appState, ...namedDependencies});
-      if (content)
+      if (content) {
+        logf(`active route set by Feature.name:${route.featureName} with priority: ${route.routePriority}`);
         return content;
+      }
     }
 
     // fallback
+    logf('active route set by client configured fallbackElm');
     return fallbackElm;
   }
 }

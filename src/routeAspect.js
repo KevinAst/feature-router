@@ -1,9 +1,12 @@
-import React                      from 'react';     // peerDependencies
+import React                   from 'react';        // peerDependencies
 import {createAspect,
-        extendAspectProperty}     from 'feature-u'; // peerDependency: 
-import StateRouter                from './StateRouter';
-import isFunction                 from 'lodash.isfunction';
+        extendAspectProperty,
+        launchApp}             from 'feature-u';    // peerDependency:
+import StateRouter             from './StateRouter';
+import isFunction              from 'lodash.isfunction';
 
+// our logger (integrated/activated via feature-u)
+export const logf = launchApp.diag.logf.newLogger('- ***feature-router*** routeAspect: ');
 
 // NOTE: See README for complete description
 export default createAspect({
@@ -18,7 +21,7 @@ export default createAspect({
 /**
  * Validate self's required configuration.
  *
- * ALSO: Register feature-redux proprietary Aspect APIs (required to pass
+ * ALSO: Register feature-router proprietary Aspect APIs (required to pass
  * feature-u validation).
  * This must occur early in the life-cycle (i.e. this method) to
  * guarantee the new API is available during feature-u validation.
@@ -33,9 +36,14 @@ export default createAspect({
  * @private
  */
 function genesis() {
-  // register feature-redux proprietary Aspect APIs
-  extendAspectProperty('fallbackElm');             // Aspect.fallbackElm: reactElm           ... AI: technically this if for reducerAspect only (if the API ever supports this)
-  extendAspectProperty('componentWillUpdateHook'); // Aspect.componentWillUpdateHook(): void ... AI: technically this if for reducerAspect only (if the API ever supports this)
+  logf('genesis() registering internal Aspect properties');
+
+  // register feature-router proprietary Aspect APIs
+  extendAspectProperty('fallbackElm');             // Aspect.fallbackElm: reactElm           ... AI: technically this if for routeAspect only (if the API ever supports this)
+  extendAspectProperty('componentWillUpdateHook'); // Aspect.componentWillUpdateHook(): void ... AI: technically this if for routeAspect only (if the API ever supports this)
+
+  extendAspectProperty('allowNoRoutes$');          // Aspect.allowNoRoutes$: true || [{routes}]
+                                                   // ... AI: technically this is for routeAspect only (if the API ever supports this)
 
   // validation
   return this.fallbackElm ? null : `the ${this.name} aspect requires fallbackElm to be configured (at run-time)!`;
@@ -71,9 +79,8 @@ function validateFeatureContent(feature) {
   else if ( !isValid(content) ) {
     return errMsg;
   }
-  else {
-    return null; // valid
-  }
+
+  return null; // valid
 }
 
 function isValid(routeCB) {
@@ -101,10 +108,11 @@ function assembleFeatureContent(app, activeFeatures) {
 
   // accumulate all routes from our features
   // ... also embellish each route with the featureName for diagnostic purposes
-  const routes = activeFeatures.reduce( (accum, feature) => {
+  const hookSummary = [];
+  let   routes      = activeFeatures.reduce( (accum, feature) => {
     const routeContent = feature[this.name];
     if (routeContent) {
-      // console.log(`xx acumulating route for ${feature.name}`);
+      hookSummary.push(`\n  Feature.name:${feature.name} <-- promotes ${this.name} AspectContent`);
       if (Array.isArray(routeContent)) {
         accum.push(...routeContent);
         routeContent.forEach( route => route.featureName = feature.name );
@@ -114,11 +122,41 @@ function assembleFeatureContent(app, activeFeatures) {
         routeContent.featureName = feature.name;
       }
     }
+    else {
+      hookSummary.push(`\n  Feature.name:${feature.name}`);
+    }
     return accum;
   }, []);
-  // console.log(`xx routes: `, routes);
 
-  // ?? how should NO routes be handled: silenty ignore, OR throw error?
+  // report the accumulation of routes
+  if (routes.length > 0) {
+    logf(`assembleFeatureContent() gathered routes from the following Features: ${hookSummary}`);
+  }
+
+  // handle special case where NO routes were gathered from features
+  else {
+
+    // by default, this is an error condition (when NOT overridden by client)
+    if (!this.allowNoRoutes$) {
+      throw new Error('***ERROR*** feature-router found NO routes within your features ' +
+                      `... did you forget to register Feature.${this.name} aspects in your features? ` +
+                      '(please refer to the feature-router docs to see how to override this behavior).');
+    }
+
+    // when client override is an array, interpret it as routes
+    if (Array.isArray(this.allowNoRoutes$)) {
+      logf.force('WARNING: NO routes were found in your Features (i.e. Feature.${this.name}), ' +
+                 'but client override (routeAspect.allowNoRoutes$=[{routes}];) ' +
+                 'directed a continuation WITH specified routes.');
+      routes = this.allowNoRoutes$;
+    }
+    // otherwise, we simply disable feature-router and continue on
+    else {
+      logf.force('WARNING: NO routes were found in your Features, ' +
+                 'but client override (routeAspect.allowNoRoutes$=true;) ' +
+                 'directed a continuation WITHOUT feature-router.');
+    }
+  }
 
   // retain for later use
   this.routes = routes;
@@ -140,14 +178,22 @@ function assembleFeatureContent(app, activeFeatures) {
  * @private
  */
 function initialRootAppElm(app, curRootAppElm) {
+
+  // no-op if we have NO routes
+  if (this.routes.length === 0) {
+    // NOTE: for this condition, the appropriate logf.force() is generated (above)
+    return curRootAppElm;
+  }
+
   // insure we don't clober any supplied content
   // ... by design, <StateRouter> doesn't support children
   if (curRootAppElm) {
-    throw new Error('*** ERROR*** Please register routeAspect (from feature-router) before other Aspects ' +
+    throw new Error('***ERROR*** Please register routeAspect (from feature-router) before other Aspects ' +
                     'that inject content in the rootAppElm ... <StateRouter> does NOT support children.');
   }
 
   // seed the rootAppElm with our StateRouter
+  logf(`initialRootAppElm() introducing <StateRouter> component into rootAppElm`);
   return <StateRouter routes={this.routes}
                       fallbackElm={this.fallbackElm}
                       componentWillUpdateHook={this.componentWillUpdateHook}
