@@ -14,7 +14,7 @@ export const logf = launchApp.diag.logf.newLogger('- ***feature-router*** <State
  *       hooks, used by the optional componentWillUpdateHook property
  *       (initially developed to support ReactNative animation).
  */
-class StateRouter extends React.Component {
+export class StateRouter extends React.Component { // NOTE: this "named" export if for testing purposes only
 
   constructor(props) {
     super(props);

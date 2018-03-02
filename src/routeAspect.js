@@ -79,9 +79,8 @@ function validateFeatureContent(feature) {
   else if ( !isValid(content) ) {
     return errMsg;
   }
-  else {
-    return null; // valid
-  }
+
+  return null; // valid
 }
 
 function isValid(routeCB) {
