@@ -21,12 +21,13 @@ run-time stack.
 
 <!--- Badges for CI Builds ---> 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3fefa1344c8c49ebaca605525760d88a)](https://www.codacy.com/app/KevinAst/feature-router?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=KevinAst/feature-router&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/3fefa1344c8c49ebaca605525760d88a)](https://www.codacy.com/app/KevinAst/feature-router?utm_source=github.com&utm_medium=referral&utm_content=KevinAst/feature-router&utm_campaign=Badge_Coverage)
 [![Known Vulnerabilities](https://snyk.io/test/github/kevinast/feature-router/badge.svg?targetFile=package.json)](https://snyk.io/test/github/kevinast/feature-router?targetFile=package.json)
 [![NPM Version Badge](https://img.shields.io/npm/v/feature-router.svg)](https://www.npmjs.com/package/feature-router)
 <!--- TODO Badges
 - CI Build: ?? WHEN CI Build In place
 - GRADE:    DONE (see above)
-- CODE COV: ?? WHEN Code coverage in place
+- CODE COV: DONE (see above)
 - Vulnerab: DONE (see above)
 - NPM:      DONE (see above)
 ---> 
