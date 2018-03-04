@@ -8,9 +8,9 @@ import {routeAspect}  from '..'; // module under test
 //       ... NOTE: this may go away when we refactor to use Aspect.config object
 describe('routeAspect() genesis2 tests', () => {
 
-  test('requires fallbackElm to be configured', () => {
+  test('requires config.fallbackElm$ to be configured', () => {
     expect(routeAspect.genesis())
-      .toMatch(/aspect requires fallbackElm to be configured/);
+      .toMatch(/aspect requires config.fallbackElm/);
   });
 
 });

@@ -69,8 +69,8 @@ for [feature-u].
   * [Feature Order and Routes](#feature-order-and-routes)
   * [Routing Precedence](#routing-precedence)
 - [Configuration](#configuration)
-  * [fallbackElm](#fallbackelm)
-  * [componentWillUpdateHook](#componentwillupdatehook)
+  * [fallbackElm$](#fallbackelm)
+  * [componentWillUpdateHook$](#componentwillupdatehook)
 - [Interface Points](#interface-points)
   * [Input](#input)
   * [Exposure](#exposure)
@@ -114,7 +114,7 @@ for [feature-u].
    [`routeAspect`] _(see: `**1**`)_ to **feature-u**'s
    [`launchApp()`].
 
-   **Please note** that [`routeAspect`] has a required [fallbackElm
+   **Please note** that [`routeAspect`] has a required [confic.fallbackElm$
    configuration item](#fallbackelm) _(see: `**2**`)_.
 
    **Also note** that [redux] must be present in your run-time stack,
@@ -130,7 +130,7 @@ for [feature-u].
    import features         from './feature';
 
    // configure Aspects (as needed)               // **2**
-   routeAspect.fallbackElm = <SplashScreen msg="I'm trying to think but it hurts!"/>;
+   routeAspect.config.fallbackElm$ = <SplashScreen msg="I'm trying to think but it hurts!"/>;
 
    export default launchApp({
 
@@ -382,12 +382,12 @@ natural and goof-proof!!!**
 
 ## Configuration
 
-### fallbackElm
+### fallbackElm$
 
-`routeAspect.fallbackElm` (**REQUIRED**):
+`routeAspect.config.fallbackElm$` (**REQUIRED**):
 
 Before you can use [`routeAspect`] you must first configure the
-`fallbackElm` representing a SplashScreen _(of sorts)_ when no routes
+`fallbackElm$` representing a SplashScreen _(of sorts)_ when no routes
 are in effect.  Simply set it as follows:
 
 ```js
@@ -395,7 +395,7 @@ import {routeAspect} from 'feature-router';
 import SplashScreen  from './wherever/SplashScreen';
 
 ...
-routeAspect.fallbackElm = <SplashScreen msg="I'm trying to think but it hurts!"/>;
+routeAspect.config.fallbackElm$ = <SplashScreen msg="I'm trying to think but it hurts!"/>;
 ...
 ```
 
@@ -405,9 +405,9 @@ know your app layout. But more importantly, it doesn't know the [react]
 platform in use _(ex: [react-web], [react-native], [expo], etc.)_.
 
 
-### componentWillUpdateHook
+### componentWillUpdateHook$
 
-`routeAspect.componentWillUpdateHook` (**OPTIONAL**):
+`routeAspect.config.componentWillUpdateHook$` (**OPTIONAL**):
 
 You can optionally specify a `<StateRouter>` componentWillUpdate
 life-cycle hook (a function that, when defined, will be invoked during
@@ -419,7 +419,7 @@ follows:
 import {routeAspect}     from 'feature-router';
 import {LayoutAnimation} from 'react-native';
 ...
-routeAspect.componentWillUpdateHook = () => LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+routeAspect.config.componentWillUpdateHook$ = () => LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
 ...
 ```
 
@@ -447,6 +447,17 @@ and outputs_) are documented here.
 
 ### Error Conditions
 
+- **Required Configuration**
+
+  If you fail to configure the required [fallbackElm$](#fallbackelm),
+  the following exception will be thrown:
+
+  ```
+  launchApp() parameter violation: 
+  the route aspect requires config.fallbackElm$ to be configured (at run-time)!
+  ```
+
+
 - **routeAspect Placement** _(Aspect Order)_
 
   The `routeAspect` must be ordered before other aspects that inject
@@ -458,9 +469,9 @@ and outputs_) are documented here.
   you)_, it will throw the following exception:
 
   ```
-  *** ERROR*** Please register routeAspect (from feature-router) 
-               before other Aspects that inject content in the rootAppElm
-               ... <StateRouter> does NOT support children.
+  ***ERROR*** Please register routeAspect (from feature-router) 
+              before other Aspects that inject content in the rootAppElm
+              ... <StateRouter> does NOT support children.
   ```
 
 - **NO Routes in Features**
@@ -483,7 +494,7 @@ and outputs_) are documented here.
   You can change this behavior through the following configuration:
 
   ```js
-  routeAspect.allowNoRoutes$ = true;
+  routeAspect.config.allowNoRoutes$ = true;
   ```
 
   With this option enabled, when no routes are found, feature-router
@@ -509,7 +520,7 @@ To use this aspect:
 
 - Within your mainline:
 
-  - configure the `routeAspect.fallbackElm` representing a
+  - configure the `routeAspect.config.fallbackElm$` representing a
     SplashScreen (of sorts) when no routes are in effect.
 
   - register the **feature-router** `routeAspect` to **feature-u**'s
