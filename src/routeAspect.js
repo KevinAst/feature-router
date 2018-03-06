@@ -141,14 +141,14 @@ function assembleFeatureContent(app, activeFeatures) {
 
     // when client override is an array, interpret it as routes
     if (Array.isArray(this.config.allowNoRoutes$)) {
-      logf.force('WARNING: NO routes were found in your Features (i.e. Feature.${this.name}), ' +
+      logf.force(`WARNING: NO routes were found in your Features (i.e. Feature.${this.name}), ` +
                  'but client override (routeAspect.config.allowNoRoutes$=[{routes}];) ' +
                  'directed a continuation WITH specified routes.');
       routes = this.config.allowNoRoutes$;
     }
     // otherwise, we simply disable feature-router and continue on
     else {
-      logf.force('WARNING: NO routes were found in your Features, ' +
+      logf.force(`WARNING: NO routes were found in your Features (i.e. Feature.${this.name}), ` +
                  'but client override (routeAspect.config.allowNoRoutes$=truthy;) ' +
                  'directed a continuation WITHOUT feature-router.');
     }
