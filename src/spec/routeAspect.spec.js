@@ -28,7 +28,11 @@ describe('routeAspect() tests', () => {
         .toBe(null);
     });
 
-    // NOTE: look for routeAspect.genesis{N}.spec.js for additional genesis() tests
+    test('requires config.fallbackElm$ to be configured', () => {
+      routeAspect.config.fallbackElm$ = null;
+      expect(routeAspect.genesis())
+        .toMatch(/aspect requires config.fallbackElm/);
+    });
 
   });
 
