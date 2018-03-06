@@ -22,13 +22,17 @@ describe('routeAspect() tests', () => {
   // *** --------------------------------------------------------------------------------
   describe('genesis()', () => {
 
-    test('fallbackElm supplied', () => {
-      routeAspect.fallbackElm = 'my simulated fallbackElm';
+    test('config.fallbackElm$ supplied', () => {
+      routeAspect.config.fallbackElm$ = 'my simulated fallbackElm';
       expect(routeAspect.genesis())
         .toBe(null);
     });
 
-    // NOTE: look for routeAspect.genesis{N}.spec.js for additional genesis() tests
+    test('requires config.fallbackElm$ to be configured', () => {
+      routeAspect.config.fallbackElm$ = null;
+      expect(routeAspect.genesis())
+        .toMatch(/aspect requires config.fallbackElm/);
+    });
 
   });
 
@@ -115,9 +119,9 @@ describe('routeAspect() tests', () => {
     });
 
     test('configuration NOT used when routes found', () => {
-      routeAspect.allowNoRoutes$ = ['MY Simulated Route'];
+      routeAspect.config.allowNoRoutes$ = ['MY Simulated Route'];
       routeAspect.assembleFeatureContent(app, [feature1, feature2, feature3]);
-      routeAspect.allowNoRoutes$ = null; // reset
+      routeAspect.config.allowNoRoutes$ = null; // reset
       expect(routeAspect.routes)
         .toEqual([ // our simulated routes with .featureName appended
                    {"featureName": "feature1"},
@@ -133,14 +137,14 @@ describe('routeAspect() tests', () => {
     });
 
     test('NO routes (CONFIGURED to NO-OP)', () => {
-      routeAspect.allowNoRoutes$ = true;
+      routeAspect.config.allowNoRoutes$ = true;
       routeAspect.assembleFeatureContent(app, [feature2]);
       expect( routeAspect.routes )
       .toEqual([]);
     });
 
     test('NO routes (CONFIGURED to our routes)', () => {
-      routeAspect.allowNoRoutes$ = ['MY Simulated Route'];
+      routeAspect.config.allowNoRoutes$ = ['MY Simulated Route'];
       routeAspect.assembleFeatureContent(app, [feature2]);
       expect( routeAspect.routes )
         .toEqual(['MY Simulated Route']);

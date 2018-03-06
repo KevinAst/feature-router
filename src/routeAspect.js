@@ -1,6 +1,5 @@
 import React                   from 'react';        // peerDependencies
 import {createAspect,
-        extendAspectProperty,
         launchApp}             from 'feature-u';    // peerDependency:
 import StateRouter             from './StateRouter';
 import isFunction              from 'lodash.isfunction';
@@ -15,6 +14,11 @@ export default createAspect({
   validateFeatureContent,
   assembleFeatureContent,
   initialRootAppElm,
+  config: {
+    fallbackElm$:             null,  // PUBLIC: reactElm ... fallback when NO routes are in effect (REQUIRED CONFIGURATION)
+    componentWillUpdateHook$: null,  // PUBLIC: componentWillUpdateHook$(): void ... invoked during react componentWillUpdate() life-cycle (OPTIONAL)
+    allowNoRoutes$:           false, // PUBLIC: client override to: true || [{routes}]
+  },
 });
 
 
@@ -36,17 +40,9 @@ export default createAspect({
  * @private
  */
 function genesis() {
-  logf('genesis() registering internal Aspect properties');
-
-  // register feature-router proprietary Aspect APIs
-  extendAspectProperty('fallbackElm');             // Aspect.fallbackElm: reactElm           ... AI: technically this if for routeAspect only (if the API ever supports this)
-  extendAspectProperty('componentWillUpdateHook'); // Aspect.componentWillUpdateHook(): void ... AI: technically this if for routeAspect only (if the API ever supports this)
-
-  extendAspectProperty('allowNoRoutes$');          // Aspect.allowNoRoutes$: true || [{routes}]
-                                                   // ... AI: technically this is for routeAspect only (if the API ever supports this)
-
   // validation
-  return this.fallbackElm ? null : `the ${this.name} aspect requires fallbackElm to be configured (at run-time)!`;
+  logf('genesis() validating required config.fallbackElm$');
+  return this.config.fallbackElm$ ? null : `the ${this.name} aspect requires config.fallbackElm$ to be configured (at run-time)!`;
 }
 
 
@@ -137,23 +133,23 @@ function assembleFeatureContent(app, activeFeatures) {
   else {
 
     // by default, this is an error condition (when NOT overridden by client)
-    if (!this.allowNoRoutes$) {
+    if (!this.config.allowNoRoutes$) {
       throw new Error('***ERROR*** feature-router found NO routes within your features ' +
                       `... did you forget to register Feature.${this.name} aspects in your features? ` +
                       '(please refer to the feature-router docs to see how to override this behavior).');
     }
 
     // when client override is an array, interpret it as routes
-    if (Array.isArray(this.allowNoRoutes$)) {
-      logf.force('WARNING: NO routes were found in your Features (i.e. Feature.${this.name}), ' +
-                 'but client override (routeAspect.allowNoRoutes$=[{routes}];) ' +
+    if (Array.isArray(this.config.allowNoRoutes$)) {
+      logf.force(`WARNING: NO routes were found in your Features (i.e. Feature.${this.name}), ` +
+                 'but client override (routeAspect.config.allowNoRoutes$=[{routes}];) ' +
                  'directed a continuation WITH specified routes.');
-      routes = this.allowNoRoutes$;
+      routes = this.config.allowNoRoutes$;
     }
     // otherwise, we simply disable feature-router and continue on
     else {
-      logf.force('WARNING: NO routes were found in your Features, ' +
-                 'but client override (routeAspect.allowNoRoutes$=true;) ' +
+      logf.force(`WARNING: NO routes were found in your Features (i.e. Feature.${this.name}), ` +
+                 'but client override (routeAspect.config.allowNoRoutes$=truthy;) ' +
                  'directed a continuation WITHOUT feature-router.');
     }
   }
@@ -195,7 +191,7 @@ function initialRootAppElm(app, curRootAppElm) {
   // seed the rootAppElm with our StateRouter
   logf(`initialRootAppElm() introducing <StateRouter> component into rootAppElm`);
   return <StateRouter routes={this.routes}
-                      fallbackElm={this.fallbackElm}
-                      componentWillUpdateHook={this.componentWillUpdateHook}
+                      fallbackElm={this.config.fallbackElm$}
+                      componentWillUpdateHook={this.config.componentWillUpdateHook$}
                       namedDependencies={{app}}/>;
 }
