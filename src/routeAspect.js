@@ -66,7 +66,15 @@ function validateFeatureContent(feature) {
   const errMsg  = `${this.name} (when supplied) must be a routeCB or routeCB[] emitted from featureRoute()`;
 
   if (Array.isArray(content)) {
-    for (const routeCB of content) {
+
+    // using old style es5 "for loop" in lieu of es6 "for of"
+    // ... issue in react-native android JS engine:
+    //     ERROR: missing Symbol.iterator: '@@iterator'
+    // ... may be related to android JS engine -or- stale babel transpiler
+    // ... for now, using es5 "for loop" is path of least resistance
+  //for (const routeCB of content) {
+    for (let i=0; i<content.length; i++) {
+      const routeCB = content[i];
       if ( !isValid(routeCB) ) {
         return errMsg;
       }
