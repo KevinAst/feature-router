@@ -1,6 +1,6 @@
 {
   "name": "feature-router",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Feature Based Navigation (using redux state)",
   "main": "lib/index.js",
   "browser": {
@@ -96,7 +96,7 @@
     "eslint": "^3.19.0",
     "eslint-loader": "^1.7.1",
     "eslint-plugin-react": "^7.6.1",
-    "feature-u": "^0.1.0",
+    "feature-u": ">=0.1.0",
     "jest": "^22.1.4",
     "npm-run-all": "^4.0.2",
     "react": ">=0.14.0",
