@@ -51,8 +51,16 @@ export class StateRouter extends React.Component { // NOTE: this "named" export 
 
     const {routes, appState, fallbackElm, namedDependencies} = this.props;
 
+    // using old style es5 "for loop" in lieu of es6 "for of"
+    // ... issue in react-native android JS engine:
+    //     ERROR: missing Symbol.iterator: '@@iterator'
+    // ... may be related to android JS engine -or- stale babel transpiler
+    // ... for now, using es5 "for loop" is path of least resistance
     // apply routes in order of 1: routePriority, 2: registration order (within same priority)
-    for (const route of routes) {
+  //for (const route of routes) {
+    for (let i=0; i<routes.length; i++) {
+      const route = routes[i];
+
       const content = route({appState, ...namedDependencies});
       if (content) {
         logf(`active route set by Feature.name:${route.featureName} with priority: ${route.routePriority}`);
