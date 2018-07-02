@@ -5,6 +5,13 @@ import {launchApp} from 'feature-u';   // peerDependency ... strictly to tap int
 // our logger (integrated/activated via feature-u)
 export const logf = launchApp.diag.logf.newLogger('- ***feature-router*** <StateRouter>: ');
 
+// TODO: DISABLE react deprecation check, till we figure out how to handle this at a library level.
+//       RECEIVING: LINT ERROR: componentWillUpdate is deprecated since React 16.3.0.
+//                  use UNSAFE_componentWillUpdate instead, 
+//                  see: https://reactjs.org/docs/react-component.html#unsafe_componentwillupdate
+//       NOTE: We are using componentWillUpdate() for ReactNative animation.
+/* eslint-disable react/no-deprecated */
+
 /**
  * A top-level React component that serves as a simple router, driven
  * by our app-level redux state!  This component must be injected in
@@ -51,15 +58,8 @@ export class StateRouter extends React.Component { // NOTE: this "named" export 
 
     const {routes, appState, fallbackElm, namedDependencies} = this.props;
 
-    // using old style es5 "for loop" in lieu of es6 "for of"
-    // ... issue in react-native android JS engine:
-    //     ERROR: missing Symbol.iterator: '@@iterator'
-    // ... may be related to android JS engine -or- stale babel transpiler
-    // ... for now, using es5 "for loop" is path of least resistance
     // apply routes in order of 1: routePriority, 2: registration order (within same priority)
-  //for (const route of routes) {
-    for (let i=0; i<routes.length; i++) {
-      const route = routes[i];
+    for (const route of routes) {
 
       const content = route({appState, ...namedDependencies});
       if (content) {
