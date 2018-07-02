@@ -11,12 +11,11 @@ and **contains migration instructions**.
 
 Release  | What                                            | *When*
 ---------|-------------------------------------------------|------------------
-[v0.1.3] | Establish Polyfill Strategy                     | *July ??, 2018*
+[v0.1.3] | Establish Polyfill Strategy                     | *July 2, 2018*
 [v0.1.1] | react-native android patch                      | *March 7, 2018*
 [v0.1.0] | Initial Release                                 | *March 6, 2018*
 
-<!-- ?? change next line WHEN date is known -->
-[v0.1.3]: #v013---establish-polyfill-strategy-july--2018
+[v0.1.3]: #v013---establish-polyfill-strategy-july-2-2018
 [v0.1.1]: #v011---react-native-android-patch-march-7-2018
 [v0.1.0]: #v010---initial-release-march-6-2018
 
@@ -53,7 +52,7 @@ UNRELEASED *********************************************************************
 
 <!-- *** RELEASE *************************************************************** -->
 
-## v0.1.3 - Establish Polyfill Strategy *(July ??, 2018)*
+## v0.1.3 - Establish Polyfill Strategy *(July 2, 2018)*
 
 [GitHub Content](https://github.com/KevinAst/feature-router/tree/v0.1.3)
 &bull;
