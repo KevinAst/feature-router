@@ -14,7 +14,7 @@ describe('StateRouter Component Tests', () => {
   const routes = [
     featureRoute({                 // originalOrder: 0
       priority: PRIORITY.STANDARD,
-      content({app, appState}) {
+      content({fassets, appState}) {
         if (appState==='appState2')
           return 'appState2Component';
         return null;
@@ -22,7 +22,7 @@ describe('StateRouter Component Tests', () => {
     }),
     featureRoute({                 // originalOrder: 1
       priority: PRIORITY.HIGH,
-      content({app, appState}) {
+      content({fassets, appState}) {
         if (appState==='appState1')
           return 'appState1Component';
         return null;
@@ -30,7 +30,7 @@ describe('StateRouter Component Tests', () => {
     }),
     featureRoute({                 // originalOrder: 2
       priority: PRIORITY.STANDARD,
-      content({app, appState}) {
+      content({fassets, appState}) {
         if (appState==='appState3')
           return 'appState3Component';
         return null;
@@ -43,7 +43,7 @@ describe('StateRouter Component Tests', () => {
     appState:    'will be reset in tests',
     fallbackElm: 'myFallbackElm',
     namedDependencies: {
-      app: 'my app',
+      fassets: 'my fassets',
     },
   });
   // GREAT: should work for our algorithm tests
@@ -60,7 +60,7 @@ describe('StateRouter Component Tests', () => {
   //         { routes: [ [Object], [Object], [Object] ],
   //           appState: 'my appState',
   //           fallbackElm: 'my fallbackElm',
-  //           namedDependencies: { app: 'my app' } },
+  //           namedDependencies: { fassets: 'my fassets' } },
   //   context: undefined,
   //   refs: {},
   //   updater:
@@ -75,7 +75,7 @@ describe('StateRouter Component Tests', () => {
   //                                  appState={'my appState'}
   //                                  fallbackElm={'my fallbackElm'}
   //                                  namedDependencies={{
-  //                                    app: 'my app',
+  //                                    fassets: 'my fassets',
   //                                  }}/>;
   // console.log(`stateRouter: `, stateRouter);
   // stateRouter:  { 
@@ -92,7 +92,7 @@ describe('StateRouter Component Tests', () => {
   //         { routes: [ [Object], [Object], [Object] ],
   //           appState: 'my appState',
   //           fallbackElm: 'my fallbackElm',
-  //           namedDependencies: { app: 'my app' } },
+  //           namedDependencies: { fassets: 'my fassets' } },
   //   _owner: null,
   //   _store: {}
   // }

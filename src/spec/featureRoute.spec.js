@@ -3,7 +3,7 @@ import {featureRoute,
 
 describe('featureRoute() Tests', () => {
 
-  function myRoute({app, appState}) {
+  function myRoute({fassets, appState}) {
     return 'my fake route';
   }
 

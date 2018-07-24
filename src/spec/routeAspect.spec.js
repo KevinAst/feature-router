@@ -8,7 +8,7 @@ logf.enable();
 
 describe('routeAspect() tests', () => {
 
-  const app = 'simulatedApp';
+  const fassets = 'simulatedFassets';
 
   // *** --------------------------------------------------------------------------------
   describe('validate routeAspect.name', () => {
@@ -59,7 +59,7 @@ describe('routeAspect() tests', () => {
     test('unprioritized route', () => {
       expect( routeAspect.validateFeatureContent( createFeature({
         name:  'featureWithUnprioritizedRoute',
-        route: ({app, appState}) => 'simulated reactElm',
+        route: ({fassets, appState}) => 'simulated reactElm',
       }) ) )
         .toMatch(/must be a routeCB or routeCB\[\]/);
     });
@@ -67,7 +67,7 @@ describe('routeAspect() tests', () => {
     test('valid route', () => {
       expect( routeAspect.validateFeatureContent( createFeature({
         name:  'featureWithValidRoute',
-        route: featureRoute({ content: ({app, appState}) => 'simulated reactElm' }),
+        route: featureRoute({ content: ({fassets, appState}) => 'simulated reactElm' }),
       }) ) )
         .toBe(null);
     });
@@ -76,8 +76,8 @@ describe('routeAspect() tests', () => {
       expect( routeAspect.validateFeatureContent( createFeature({
         name:  'featureWithValidRoutes',
         route: [
-          featureRoute({ content: ({app, appState}) => 'simulated reactElm1' }),
-          featureRoute({ content: ({app, appState}) => 'simulated reactElm2' }),
+          featureRoute({ content: ({fassets, appState}) => 'simulated reactElm1' }),
+          featureRoute({ content: ({fassets, appState}) => 'simulated reactElm2' }),
         ],
       }) ) )
         .toBe(null);
@@ -109,7 +109,7 @@ describe('routeAspect() tests', () => {
     });
 
     test('valid assemble with mixture', () => {
-      routeAspect.assembleFeatureContent(app, [feature1, feature2, feature3]);
+      routeAspect.assembleFeatureContent(fassets, [feature1, feature2, feature3]);
       expect(routeAspect.routes)
         .toEqual([ // our simulated routes with .featureName appended
           {"featureName": "feature1"},
@@ -120,7 +120,7 @@ describe('routeAspect() tests', () => {
 
     test('configuration NOT used when routes found', () => {
       routeAspect.config.allowNoRoutes$ = ['MY Simulated Route'];
-      routeAspect.assembleFeatureContent(app, [feature1, feature2, feature3]);
+      routeAspect.assembleFeatureContent(fassets, [feature1, feature2, feature3]);
       routeAspect.config.allowNoRoutes$ = null; // reset
       expect(routeAspect.routes)
         .toEqual([ // our simulated routes with .featureName appended
@@ -131,21 +131,21 @@ describe('routeAspect() tests', () => {
     });
 
     test('NO routes (DEFAULT)', () => {
-      expect( () => routeAspect.assembleFeatureContent(app, [feature2]) )
+      expect( () => routeAspect.assembleFeatureContent(fassets, [feature2]) )
         .toThrow(/found NO routes within your features/);
       // THROWS: ***ERROR*** feature-router found NO routes within your features ... did you forget to register Feature.route aspects in your features? (please refer to the feature-router docs to see how to override this behavior).
     });
 
     test('NO routes (CONFIGURED to NO-OP)', () => {
       routeAspect.config.allowNoRoutes$ = true;
-      routeAspect.assembleFeatureContent(app, [feature2]);
+      routeAspect.assembleFeatureContent(fassets, [feature2]);
       expect( routeAspect.routes )
       .toEqual([]);
     });
 
     test('NO routes (CONFIGURED to our routes)', () => {
       routeAspect.config.allowNoRoutes$ = ['MY Simulated Route'];
-      routeAspect.assembleFeatureContent(app, [feature2]);
+      routeAspect.assembleFeatureContent(fassets, [feature2]);
       expect( routeAspect.routes )
         .toEqual(['MY Simulated Route']);
     });
@@ -158,20 +158,20 @@ describe('routeAspect() tests', () => {
 
     test('test no-op with NO routes', () => {
       routeAspect.routes = []; // NO routes
-      expect(routeAspect.initialRootAppElm(app, 'simulated_curRootAppElm'))
+      expect(routeAspect.initialRootAppElm(fassets, 'simulated_curRootAppElm'))
         .toBe('simulated_curRootAppElm');
     });
 
     test('test routeAspect AFTER rootAppElm defined', () => {
       routeAspect.routes = ['MY Simulated Route']; // with routes
-      expect( () => routeAspect.initialRootAppElm(app, 'simulated_curRootAppElm ALREADY DEFINED') )
+      expect( () => routeAspect.initialRootAppElm(fassets, 'simulated_curRootAppElm ALREADY DEFINED') )
         .toThrow(/register routeAspect .* before other Aspects that inject content in the rootAppElm/);
       // THROWS: ***ERROR*** Please register routeAspect (from feature-router) before other Aspects that inject content in the rootAppElm ... <StateRouter> does NOT support children.
     });
 
     test('test success', () => {
       routeAspect.routes = ['MY Simulated Route']; // with routes
-      expect( routeAspect.initialRootAppElm(app, null) )
+      expect( routeAspect.initialRootAppElm(fassets, null) )
         .toBeTruthy();
     });
 

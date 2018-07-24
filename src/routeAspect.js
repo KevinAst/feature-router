@@ -93,14 +93,14 @@ function isValid(routeCB) {
 /**
  * Accumulate all routes from our features.
  *
- * @param {App} app the App object used in feature cross-communication.
+ * @param {Fassets} fassets the Fassets object used in cross-feature-communication.
  * 
  * @param {Feature[]} activeFeatures - The set of active (enabled)
  * features that comprise this application.
  *
  * @private
  */
-function assembleFeatureContent(app, activeFeatures) {
+function assembleFeatureContent(fassets, activeFeatures) {
 
   // accumulate all routes from our features
   // ... also embellish each route with the featureName for diagnostic purposes
@@ -165,7 +165,7 @@ function assembleFeatureContent(app, activeFeatures) {
  * We use `initialRootAppElm()` because `<StateRouter>` does NOT
  * support children (by design).
  *
- * @param {App} app the App object used in feature cross-communication.
+ * @param {Fassets} fassets the Fassets object used in cross-feature-communication.
  * 
  * @param {reactElm} curRootAppElm - the current react app element root.
  *
@@ -173,7 +173,7 @@ function assembleFeatureContent(app, activeFeatures) {
  *
  * @private
  */
-function initialRootAppElm(app, curRootAppElm) {
+function initialRootAppElm(fassets, curRootAppElm) {
 
   // no-op if we have NO routes
   if (this.routes.length === 0) {
@@ -193,5 +193,5 @@ function initialRootAppElm(app, curRootAppElm) {
   return <StateRouter routes={this.routes}
                       fallbackElm={this.config.fallbackElm$}
                       componentWillUpdateHook={this.config.componentWillUpdateHook$}
-                      namedDependencies={{app}}/>;
+                      namedDependencies={{fassets}}/>;
 }
