@@ -726,7 +726,7 @@ implemented)_ is intended to address this issue.
 [feature-u]:              https://feature-u.js.org/
 [`launchApp()`]:          https://feature-u.js.org/cur/api.html#launchApp
 [`createFeature()`]:      https://feature-u.js.org/cur/api.html#createFeature
-[`managedExpansion()`]:   https://feature-u.js.org/cur/api.html#managedExpansion
+[`expandWithFassets()`]:  https://feature-u.js.org/cur/api.html#expandWithFassets
 [`Feature`]:              https://feature-u.js.org/cur/api.html#Feature
 [`Fassets object`]:       https://feature-u.js.org/cur/api.html#Fassets
 [`Aspect`]:               https://feature-u.js.org/cur/api.html#Aspect
