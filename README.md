@@ -115,7 +115,7 @@ Polyfills](#potential-need-for-polyfills))_.
    [`routeAspect`] _(see: `**1**`)_ to **feature-u**'s
    [`launchApp()`].
 
-   **Please note** that [`routeAspect`] has a required [confic.fallbackElm$
+   **Please note** that [`routeAspect`] has a required [config.fallbackElm$
    configuration item](#fallbackelm) _(see: `**2**`)_.
 
    **Also note** that [redux] must be present in your run-time stack,
@@ -124,20 +124,21 @@ Polyfills](#potential-need-for-polyfills))_.
 
    **src/app.js**
    ```js
-   import {launchApp}      from 'feature-u';
-   import {routeAspect}    from 'feature-router'; // **1**
-   import {reducerAspect}  from 'feature-redux';  // **3**
-   import SplashScreen     from '~/util/comp/SplashScreen';
-   import features         from './feature';
+   import {launchApp}            from 'feature-u';
+   import {createRouteAspect}    from 'feature-router'; // **1**
+   import {createReducerAspect}  from 'feature-redux';  // **3**
+   import SplashScreen           from '~/util/comp/SplashScreen';
+   import features               from './feature';
 
-   // configure Aspects (as needed)               // **2**
+   // configure Aspects (as needed) // **2**
+   const routeAspect = createRouteAspect();
    routeAspect.config.fallbackElm$ = <SplashScreen msg="I'm trying to think but it hurts!"/>;
 
    export default launchApp({
 
      aspects: [
-       routeAspect,                               // **1**
-       reducerAspect,                             // **3**
+       routeAspect,                 // **1**
+       createReducerAspect(),       // **3**
        ... other Aspects here
      ],
 
@@ -392,8 +393,10 @@ Before you can use [`routeAspect`] you must first configure the
 are in effect.  Simply set it as follows:
 
 ```js
-import {routeAspect} from 'feature-router';
-import SplashScreen  from './wherever/SplashScreen';
+import {createRouteAspect} from 'feature-router';
+import SplashScreen        from './wherever/SplashScreen';
+
+const routeAspect = createRouteAspect();
 
 ...
 routeAspect.config.fallbackElm$ = <SplashScreen msg="I'm trying to think but it hurts!"/>;
@@ -417,8 +420,11 @@ introduced in support of [react-native] animation._ Simply set it as
 follows:
 
 ```js
-import {routeAspect}     from 'feature-router';
-import {LayoutAnimation} from 'react-native';
+import {createRouteAspect} from 'feature-router';
+import {LayoutAnimation}   from 'react-native';
+
+const routeAspect = createRouteAspect();
+
 ...
 routeAspect.config.componentWillUpdateHook$ = () => LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
 ...
@@ -517,6 +523,8 @@ and outputs_) are documented here.
 ### routeAspect: Aspect
 
 <ul><!--- indentation hack for github - other attempts with style is stripped (be careful with number bullets) ---> 
+
+`API: createRouteAspect([name='route']): routeAspect`
 
 The `routeAspect` is the [feature-u] plugin that facilitates
 **Feature Route** integration to your features.

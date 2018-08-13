@@ -1,7 +1,9 @@
-import {routeAspect, 
+import {createRouteAspect,
         featureRoute}   from '..';             // module under test
 import {createFeature}  from 'feature-u';      // peerDependency:
 import {logf}           from '../routeAspect'; // to enable logs
+
+const routeAspect = createRouteAspect();
 
 // enable logging ONLY to insure NO run-time errors in our logging probes
 logf.enable();
@@ -16,6 +18,19 @@ describe('routeAspect() tests', () => {
       expect( routeAspect.name)
         .toEqual('route');
     });
+  });
+
+  // *** --------------------------------------------------------------------------------
+  describe('validate createRouteAspect() parameter violation', () => {
+
+    expect( () => createRouteAspect(null) )
+      .toThrow(/name is required/);
+    // THROW: createRouteAspect() parameter violation: name is required
+
+    expect( () => createRouteAspect(123) )
+      .toThrow(/name must be a string/);
+    // THROW: createRouteAspect() parameter violation: name must be a string
+
   });
 
 

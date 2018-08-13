@@ -2,24 +2,36 @@ import React                   from 'react';        // peerDependencies
 import {createAspect,
         launchApp}             from 'feature-u';    // peerDependency:
 import StateRouter             from './StateRouter';
+import verify                  from './util/verify';
 import isFunction              from 'lodash.isfunction';
 
 // our logger (integrated/activated via feature-u)
 export const logf = launchApp.diag.logf.newLogger('- ***feature-router*** routeAspect: ');
 
 // NOTE: See README for complete description
-export default createAspect({
-  name: 'route',
-  genesis,
-  validateFeatureContent,
-  assembleFeatureContent,
-  initialRootAppElm,
-  config: {
-    fallbackElm$:             null,  // PUBLIC: reactElm ... fallback when NO routes are in effect (REQUIRED CONFIGURATION)
-    componentWillUpdateHook$: null,  // PUBLIC: componentWillUpdateHook$(): void ... invoked during react componentWillUpdate() life-cycle (OPTIONAL)
-    allowNoRoutes$:           false, // PUBLIC: client override to: true || [{routes}]
-  },
-});
+export default function createRouteAspect(name='route') {
+
+  // validate parameters
+  const check = verify.prefix('createRouteAspect() parameter violation: ');
+
+  check(name,                      'name is required');
+  check(typeof name === 'string',  'name must be a string'); // NOTE: didn't want to introduce lodash.isstring dependancy (in the mix of everything else going on in the 1.0.0 upgrade)
+
+  // create/promote our new aspect
+  const routeAspect = createAspect({
+    name,
+    genesis,
+    validateFeatureContent,
+    assembleFeatureContent,
+    initialRootAppElm,
+    config: {
+      fallbackElm$:             null,  // PUBLIC: reactElm ... fallback when NO routes are in effect (REQUIRED CONFIGURATION)
+      componentWillUpdateHook$: null,  // PUBLIC: componentWillUpdateHook$(): void ... invoked during react componentWillUpdate() life-cycle (OPTIONAL)
+      allowNoRoutes$:           false, // PUBLIC: client override to: true || [{routes}]
+    },
+  });
+  return routeAspect;
+}
 
 
 /**
