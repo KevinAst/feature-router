@@ -75,6 +75,7 @@
   },
   "homepage": "https://github.com/KevinAst/feature-router",
   "jest": {
+    "testURL": "http://localhost",
     "collectCoverageFrom": [
       "src/**/*.js",
       "!**/spec/**"
