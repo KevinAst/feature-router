@@ -1,6 +1,6 @@
-import routeAspect    from './routeAspect';
+import createRouteAspect from './routeAspect';
 import featureRoute,
-       {PRIORITY}     from './featureRoute';
+       {PRIORITY}        from './featureRoute';
 
 //*** 
 //*** Promote all feature-redux utilities through a centralized module.
@@ -12,7 +12,7 @@ import featureRoute,
 //       -or-
 //         import * as FeatureU from 'feature-redux';
 export {
-  routeAspect,
+  createRouteAspect,
   featureRoute,
   PRIORITY,
 };
@@ -23,7 +23,7 @@ export {
 //       -or-
 //         const FeatureU   = require('feature-redux');
 export default {
-  routeAspect,
+  createRouteAspect,
   featureRoute,
   PRIORITY,
 };

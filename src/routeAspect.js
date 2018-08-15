@@ -2,24 +2,36 @@ import React                   from 'react';        // peerDependencies
 import {createAspect,
         launchApp}             from 'feature-u';    // peerDependency:
 import StateRouter             from './StateRouter';
+import verify                  from './util/verify';
 import isFunction              from 'lodash.isfunction';
 
 // our logger (integrated/activated via feature-u)
 export const logf = launchApp.diag.logf.newLogger('- ***feature-router*** routeAspect: ');
 
 // NOTE: See README for complete description
-export default createAspect({
-  name: 'route',
-  genesis,
-  validateFeatureContent,
-  assembleFeatureContent,
-  initialRootAppElm,
-  config: {
-    fallbackElm$:             null,  // PUBLIC: reactElm ... fallback when NO routes are in effect (REQUIRED CONFIGURATION)
-    componentWillUpdateHook$: null,  // PUBLIC: componentWillUpdateHook$(): void ... invoked during react componentWillUpdate() life-cycle (OPTIONAL)
-    allowNoRoutes$:           false, // PUBLIC: client override to: true || [{routes}]
-  },
-});
+export default function createRouteAspect(name='route') {
+
+  // validate parameters
+  const check = verify.prefix('createRouteAspect() parameter violation: ');
+
+  check(name,                      'name is required');
+  check(typeof name === 'string',  'name must be a string'); // NOTE: didn't want to introduce lodash.isstring dependancy (in the mix of everything else going on in the 1.0.0 upgrade)
+
+  // create/promote our new aspect
+  const routeAspect = createAspect({
+    name,
+    genesis,
+    validateFeatureContent,
+    assembleFeatureContent,
+    initialRootAppElm,
+    config: {
+      fallbackElm$:             null,  // PUBLIC: reactElm ... fallback when NO routes are in effect (REQUIRED CONFIGURATION)
+      componentWillUpdateHook$: null,  // PUBLIC: componentWillUpdateHook$(): void ... invoked during react componentWillUpdate() life-cycle (OPTIONAL)
+      allowNoRoutes$:           false, // PUBLIC: client override to: true || [{routes}]
+    },
+  });
+  return routeAspect;
+}
 
 
 /**
@@ -93,14 +105,14 @@ function isValid(routeCB) {
 /**
  * Accumulate all routes from our features.
  *
- * @param {App} app the App object used in feature cross-communication.
+ * @param {Fassets} fassets the Fassets object used in cross-feature-communication.
  * 
  * @param {Feature[]} activeFeatures - The set of active (enabled)
  * features that comprise this application.
  *
  * @private
  */
-function assembleFeatureContent(app, activeFeatures) {
+function assembleFeatureContent(fassets, activeFeatures) {
 
   // accumulate all routes from our features
   // ... also embellish each route with the featureName for diagnostic purposes
@@ -165,7 +177,7 @@ function assembleFeatureContent(app, activeFeatures) {
  * We use `initialRootAppElm()` because `<StateRouter>` does NOT
  * support children (by design).
  *
- * @param {App} app the App object used in feature cross-communication.
+ * @param {Fassets} fassets the Fassets object used in cross-feature-communication.
  * 
  * @param {reactElm} curRootAppElm - the current react app element root.
  *
@@ -173,7 +185,7 @@ function assembleFeatureContent(app, activeFeatures) {
  *
  * @private
  */
-function initialRootAppElm(app, curRootAppElm) {
+function initialRootAppElm(fassets, curRootAppElm) {
 
   // no-op if we have NO routes
   if (this.routes.length === 0) {
@@ -193,5 +205,5 @@ function initialRootAppElm(app, curRootAppElm) {
   return <StateRouter routes={this.routes}
                       fallbackElm={this.config.fallbackElm$}
                       componentWillUpdateHook={this.config.componentWillUpdateHook$}
-                      namedDependencies={{app}}/>;
+                      namedDependencies={{fassets}}/>;
 }

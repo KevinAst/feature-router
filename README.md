@@ -72,7 +72,7 @@ for [feature-u].
 - [API](#api)
   - [`routeAspect: Aspect`](#routeaspect-aspect)
   - [`featureRoute({content, [priority]}): routeCB`](#featureroute)
-    - [`routeCB({app, appState}): reactElm || null`](#routecb)
+    - [`routeCB({fassets, appState}): reactElm || null`](#routecb)
   - [`PRIORITY`]
 - [Potential Need for Polyfills](#potential-need-for-polyfills)
 
@@ -90,7 +90,7 @@ for [feature-u].
   npm install --save react-redux
   ```
   <!--- WITH REVEAL of USAGE:
-  npm install --save feature-u    # VER: >=0.1.0    USAGE: createAspect()
+  npm install --save feature-u    # VER: >=1.0.0    USAGE: createAspect() (v1 replaces App with Fassets obj -AND- publicFace with fassets aspect)
   npm install --save react        # VER: >=0.14.0   USAGE: <StateRouter> component definition and it's injection into the DOM with JSX
   npm install --save redux        # VER: >=3.1.0    USAGE: indirect under-the-covers (because of the react-redux connect() usage) ... found in unit testing
   npm install --save react-redux  # VER: >=3.0.0    USAGE: connect() within <StateRouter>
@@ -115,7 +115,7 @@ Polyfills](#potential-need-for-polyfills))_.
    [`routeAspect`] _(see: `**1**`)_ to **feature-u**'s
    [`launchApp()`].
 
-   **Please note** that [`routeAspect`] has a required [confic.fallbackElm$
+   **Please note** that [`routeAspect`] has a required [config.fallbackElm$
    configuration item](#fallbackelm) _(see: `**2**`)_.
 
    **Also note** that [redux] must be present in your run-time stack,
@@ -124,20 +124,21 @@ Polyfills](#potential-need-for-polyfills))_.
 
    **src/app.js**
    ```js
-   import {launchApp}      from 'feature-u';
-   import {routeAspect}    from 'feature-router'; // **1**
-   import {reducerAspect}  from 'feature-redux';  // **3**
-   import SplashScreen     from '~/util/comp/SplashScreen';
-   import features         from './feature';
+   import {launchApp}            from 'feature-u';
+   import {createRouteAspect}    from 'feature-router'; // **1**
+   import {createReducerAspect}  from 'feature-redux';  // **3**
+   import SplashScreen           from '~/util/comp/SplashScreen';
+   import features               from './feature';
 
-   // configure Aspects (as needed)               // **2**
+   // configure Aspects (as needed) // **2**
+   const routeAspect = createRouteAspect();
    routeAspect.config.fallbackElm$ = <SplashScreen msg="I'm trying to think but it hurts!"/>;
 
    export default launchApp({
 
      aspects: [
-       routeAspect,                               // **1**
-       reducerAspect,                             // **3**
+       routeAspect,                 // **1**
+       createReducerAspect(),       // **3**
        ... other Aspects here
      ],
 
@@ -178,7 +179,7 @@ Polyfills](#potential-need-for-polyfills))_.
 
      route: featureRoute({              // **5** 
        priority: PRIORITY.HIGH,         // **6**
-       content({app, appState}) {       // **4**
+       content({fassets, appState}) {   // **4**
          if (!selector.isDeviceReady(appState)) {
            return <SplashScreen msg={selector.getDeviceStatusMsg(appState)}/>;
          }
@@ -259,7 +260,7 @@ The `route` directive contains one or more function callbacks
 ([`routeCB()`]), as defined by the `content` parameter of
 [`featureRoute()`].  This callback has the following signature:
 
-**API:** `routeCB({app, appState}): reactElm || null`
+**API:** `routeCB({fassets, appState}): reactElm || null`
 
 
 ### Route Priorities
@@ -306,7 +307,7 @@ export default createFeature({
   route: [
     featureRoute({
       priority: PRIORITY.HIGH,
-      content({app, appState}) {
+      content({fassets, appState}) {
         // display EateryFilterScreen, when form is active (accomplished by our logic)
         // NOTE: this is done as a priority route, because this screen can be used to
         //       actually change the view - so we display it regardless of the state of
@@ -318,10 +319,10 @@ export default createFeature({
     }),
 
     featureRoute({
-      content({app, appState}) {
+      content({fassets, appState}) {
 
         // allow other down-stream features to route, when the active view is NOT ours
-        if (app.currentView.sel.getView(appState) !== featureName) {
+        if (fassets.sel.getView(appState) !== featureName) {
           return null;
         }
         
@@ -392,8 +393,10 @@ Before you can use [`routeAspect`] you must first configure the
 are in effect.  Simply set it as follows:
 
 ```js
-import {routeAspect} from 'feature-router';
-import SplashScreen  from './wherever/SplashScreen';
+import {createRouteAspect} from 'feature-router';
+import SplashScreen        from './wherever/SplashScreen';
+
+const routeAspect = createRouteAspect();
 
 ...
 routeAspect.config.fallbackElm$ = <SplashScreen msg="I'm trying to think but it hurts!"/>;
@@ -417,8 +420,11 @@ introduced in support of [react-native] animation._ Simply set it as
 follows:
 
 ```js
-import {routeAspect}     from 'feature-router';
-import {LayoutAnimation} from 'react-native';
+import {createRouteAspect} from 'feature-router';
+import {LayoutAnimation}   from 'react-native';
+
+const routeAspect = createRouteAspect();
+
 ...
 routeAspect.config.componentWillUpdateHook$ = () => LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
 ...
@@ -445,6 +451,10 @@ and outputs_) are documented here.
   This allows your `Feature.route` hooks to specify the active screen,
   based on your application state.
 
+- As a convenience, **feature-router** auto injects the **feature-u**
+  [`Fassets object`] as a named parameter in the
+  [`routeCB()`](#routecb) API.  This promotes full [Cross Feature
+  Communication].
 
 ### Error Conditions
 
@@ -513,6 +523,8 @@ and outputs_) are documented here.
 ### routeAspect: Aspect
 
 <ul><!--- indentation hack for github - other attempts with style is stripped (be careful with number bullets) ---> 
+
+`API: createRouteAspect([name='route']): routeAspect`
 
 The `routeAspect` is the [feature-u] plugin that facilitates
 **Feature Route** integration to your features.
@@ -591,7 +603,7 @@ the supplied `content` function, embellished with the specified
 
 <ul><!--- indentation hack for github - other attempts with style is stripped (be careful with number bullets) ---> 
 
-**API:** `routeCB({app, appState}): reactElm || null`
+**API:** `routeCB({fassets, appState}): reactElm || null`
 
 A functional callback hook (specified by [`featureRoute()`]) that
 provides a generalized run-time API to abstractly expose component
@@ -614,11 +626,11 @@ For more details, please refer to [A Closer Look].
 
 **Parameters**:
 
-- **app**: [`App`]
+- **fassets**: [`Fassets object`]
 
-  The [`App`] object used in feature cross-communication.
+  The [`Fassets object`] used in feature cross-communication.
 
-  **SideBar**: `app` is actually injected by the [`routeAspect`] using
+  **SideBar**: `fassets` is actually injected by the [`routeAspect`] using
   `<StateRouter>`'s namedDependencies.  However, since
   **feature-router** is currently the only interface to
   `<StateRouter>`, we document it as part of this **routeCB** API.
@@ -722,12 +734,12 @@ implemented)_ is intended to address this issue.
 [feature-u]:              https://feature-u.js.org/
 [`launchApp()`]:          https://feature-u.js.org/cur/api.html#launchApp
 [`createFeature()`]:      https://feature-u.js.org/cur/api.html#createFeature
-[`managedExpansion()`]:   https://feature-u.js.org/cur/api.html#managedExpansion
-[publicFace]:             https://feature-u.js.org/cur/crossCommunication.html#publicface-and-the-app-object
+[`expandWithFassets()`]:  https://feature-u.js.org/cur/api.html#expandWithFassets
 [`Feature`]:              https://feature-u.js.org/cur/api.html#Feature
-[`App`]:                  https://feature-u.js.org/cur/api.html#App
+[`Fassets object`]:       https://feature-u.js.org/cur/api.html#Fassets
 [`Aspect`]:               https://feature-u.js.org/cur/api.html#Aspect
 [Managed Code Expansion]: https://feature-u.js.org/cur/crossCommunication.html#managed-code-expansion
+[Cross Feature Communication]: https://feature-u.js.org/cur/crossCommunication.html
 
 <!--- react ---> 
 [react]:            https://reactjs.org/

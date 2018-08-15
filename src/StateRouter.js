@@ -84,7 +84,7 @@ export class StateRouter extends React.Component { // NOTE: this "named" export 
 //   appState:    PropTypes.object.isRequired,  // appState, from which to reason about routes
 //   fallbackElm: PropTypes.element.isRequired, // fallback elm representing a SplashScreen (of sorts) when no routes are in effect
 //   componentWillUpdateHook: PropTypes.func    // OPTIONAL: invoked in componentWillUpdate() life-cycle hook (initially developed to support ReactNative animation)
-//   namedDependencies: PropTypes.object        // OPTIONAL: object containing named dependencies to be injected into to routeCB() function call ... ex: <StateRouter namedDependencies={{app, api}}/>
+//   namedDependencies: PropTypes.object        // OPTIONAL: object containing named dependencies to be injected into to routeCB() function call ... ex: <StateRouter namedDependencies={{fassets, api}}/>
 // };
 
 // access redux appState, via redux connect()
