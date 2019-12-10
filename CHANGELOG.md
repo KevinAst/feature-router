@@ -11,11 +11,13 @@ and **contains migration instructions**.
 
 Release  | What                                            | *When*
 ---------|-------------------------------------------------|------------------
+[v1.0.1] | Address Security Alerts                         | *December 10, 2019*
 [v1.0.0] | feature-u V1 Integration                        | *August 14, 2018*
 [v0.1.3] | Establish Polyfill Strategy                     | *July 2, 2018*
 [v0.1.1] | react-native android patch                      | *March 7, 2018*
 [v0.1.0] | Initial Release                                 | *March 6, 2018*
 
+[v1.0.1]: #v101---address-security-alerts-december-10-2019
 [v1.0.0]: #v100---feature-u-v1-integration-august-14-2018
 [v0.1.3]: #v013---establish-polyfill-strategy-july-2-2018
 [v0.1.1]: #v011---react-native-android-patch-march-7-2018
@@ -50,6 +52,23 @@ RUNNING CONTENT (pop out as needed) ...
 
 
 UNRELEASED ******************************************************************************** -->
+
+
+<!-- *** RELEASE *************************************************************** -->
+
+## v1.0.1 - Address Security Alerts *(December 10, 2019)*
+
+[GitHub Content](https://github.com/KevinAst/feature-router/tree/v1.0.1)
+&bull;
+[GitHub Release](https://github.com/KevinAst/feature-router/releases/tag/v1.0.1)
+&bull;
+[Diff](https://github.com/KevinAst/feature-router/compare/v1.0.0...v1.0.1)
+
+**NOTE**: This release is a **non-breaking change** _(i.e. no API was affected)_.
+
+- **Security**: Address potential security vulnerabilities in
+  dependent libs (mostly devDependencies completely unrelated to
+  deployment)!
 
 
 <!-- *** RELEASE *************************************************************** -->
