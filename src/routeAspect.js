@@ -26,7 +26,7 @@ export default function createRouteAspect(name='route') {
     initialRootAppElm,
     config: {
       fallbackElm$:             null,  // PUBLIC: reactElm ... fallback when NO routes are in effect (REQUIRED CONFIGURATION)
-      componentWillUpdateHook$: null,  // PUBLIC: componentWillUpdateHook$(): void ... invoked during react componentWillUpdate() life-cycle (OPTIONAL)
+      componentDidUpdateHook$: null,  // PUBLIC: componentDidUpdateHook$(): void ... invoked during react componentDidUpdate() life-cycle (OPTIONAL)
       allowNoRoutes$:           false, // PUBLIC: client override to: true || [{routes}]
     },
   });
@@ -204,6 +204,6 @@ function initialRootAppElm(fassets, curRootAppElm) {
   logf(`initialRootAppElm() introducing <StateRouter> component into rootAppElm`);
   return <StateRouter routes={this.routes}
                       fallbackElm={this.config.fallbackElm$}
-                      componentWillUpdateHook={this.config.componentWillUpdateHook$}
+                      componentDidUpdateHook={this.config.componentDidUpdateHook$}
                       namedDependencies={{fassets}}/>;
 }

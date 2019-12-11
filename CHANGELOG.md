@@ -70,6 +70,13 @@ UNRELEASED *********************************************************************
   dependent libs (mostly devDependencies completely unrelated to
   deployment)!
 
+- **Changed**: The `componentWillUpdateHook$` configuration was
+  renamed to `componentDidUpdateHook$`, and interfaces to the hook
+  by the same name.  NOTE: This is in support of ReactNative animation.
+  `componentWillUpdate` has been deprecated, however relative to 
+  ReactNative animation, `componentDidUpdate` evidently works as expected
+  ... see: [React Native’s LayoutAnimation in the post-componentWillUpdate age](https://medium.com/@benadamstyles/react-native-layoutanimation-in-the-post-componentwillupdate-age-9146b3af0243).
+
 
 <!-- *** RELEASE *************************************************************** -->
 

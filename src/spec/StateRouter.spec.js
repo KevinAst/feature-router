@@ -107,22 +107,22 @@ describe('StateRouter Component Tests', () => {
 
 
   // *** --------------------------------------------------------------------------------
-  describe('componentWillUpdate()', () => {
+  describe('componentDidUpdate()', () => {
 
     let hookInvoked = false;
 
     test('not configured', () => {
-      stateRouter.componentWillUpdate();
+      stateRouter.componentDidUpdate();
       expect(hookInvoked)
         .toBe(false);
     });
 
     test('configured', () => {
-      stateRouter.props.componentWillUpdateHook = function() {
+      stateRouter.props.componentDidUpdateHook = function() {
         hookInvoked = true;
       };
-      stateRouter.componentWillUpdate();
-      stateRouter.props.componentWillUpdateHook = null;
+      stateRouter.componentDidUpdate();
+      stateRouter.props.componentDidUpdateHook = null;
       expect(hookInvoked)
         .toBe(true);
     });

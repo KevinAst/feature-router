@@ -64,7 +64,7 @@ for [feature-u].
   * [Routing Precedence](#routing-precedence)
 - [Configuration](#configuration)
   * [fallbackElm$](#fallbackelm)
-  * [componentWillUpdateHook$](#componentwillupdatehook)
+  * [componentDidUpdateHook$](#componentdidupdatehook)
 - [Interface Points](#interface-points)
   * [Input](#input)
   * [Exposure](#exposure)
@@ -409,13 +409,13 @@ know your app layout. But more importantly, it doesn't know the [react]
 platform in use _(ex: [react-web], [react-native], [expo], etc.)_.
 
 
-### componentWillUpdateHook$
+### componentDidUpdateHook$
 
-`routeAspect.config.componentWillUpdateHook$` (**OPTIONAL**):
+`routeAspect.config.componentDidUpdateHook$` (**OPTIONAL**):
 
-You can optionally specify a `<StateRouter>` componentWillUpdate
+You can optionally specify a `<StateRouter>` componentDidUpdate
 life-cycle hook (a function that, when defined, will be invoked during
-the componentWillUpdate react life-cycle phase).  _This was initially
+the componentDidUpdate react life-cycle phase).  _This was initially
 introduced in support of [react-native] animation._ Simply set it as
 follows:
 
@@ -426,7 +426,7 @@ import {LayoutAnimation}   from 'react-native';
 const routeAspect = createRouteAspect();
 
 ...
-routeAspect.config.componentWillUpdateHook$ = () => LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+routeAspect.config.componentDidUpdateHook$ = () => LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
 ...
 ```
 

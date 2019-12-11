@@ -5,20 +5,13 @@ import {launchApp} from 'feature-u';   // peerDependency ... strictly to tap int
 // our logger (integrated/activated via feature-u)
 export const logf = launchApp.diag.logf.newLogger('- ***feature-router*** <StateRouter>: ');
 
-// TODO: DISABLE react deprecation check, till we figure out how to handle this at a library level.
-//       RECEIVING: LINT ERROR: componentWillUpdate is deprecated since React 16.3.0.
-//                  use UNSAFE_componentWillUpdate instead, 
-//                  see: https://reactjs.org/docs/react-component.html#unsafe_componentwillupdate
-//       NOTE: We are using componentWillUpdate() for ReactNative animation.
-/* eslint-disable react/no-deprecated */
-
 /**
  * A top-level React component that serves as a simple router, driven
  * by our app-level redux state!  This component must be injected in
  * the root of your application DOM element.
  *
  * NOTE: We use React class in order to tap into it's life-cycle
- *       hooks, used by the optional componentWillUpdateHook property
+ *       hooks, used by the optional componentDidUpdateHook property
  *       (initially developed to support ReactNative animation).
  */
 export class StateRouter extends React.Component { // NOTE: this "named" export if for testing purposes only
@@ -41,12 +34,14 @@ export class StateRouter extends React.Component { // NOTE: this "named" export 
     logf(`route order ...${hookSummary}`);
   }
 
-  componentWillUpdate() {
-    // optionally invoke the componentWillUpdateHook (when specified)
+  componentDidUpdate() {
+    // optionally invoke the componentDidUpdateHook (when specified)
     // ... initially developed to support ReactNative animation
-    if (this.props.componentWillUpdateHook) {
-      logf('running client specified componentWillUpdateHook()'); // AI: is this too much logging? ... however: only when enabled
-      this.props.componentWillUpdateHook();
+    //     SEE: React Native’s LayoutAnimation in the post-componentWillUpdate age
+    //          ... https://medium.com/@benadamstyles/react-native-layoutanimation-in-the-post-componentwillupdate-age-9146b3af0243
+    if (this.props.componentDidUpdateHook) {
+      logf('running client specified componentDidUpdateHook()'); // AI: is this too much logging? ... however: only when enabled
+      this.props.componentDidUpdateHook();
     }
   }
 
@@ -83,7 +78,7 @@ export class StateRouter extends React.Component { // NOTE: this "named" export 
 //   routes:      PropTypes.array.isRequired,   // all registered routes: routeCB[]
 //   appState:    PropTypes.object.isRequired,  // appState, from which to reason about routes
 //   fallbackElm: PropTypes.element.isRequired, // fallback elm representing a SplashScreen (of sorts) when no routes are in effect
-//   componentWillUpdateHook: PropTypes.func    // OPTIONAL: invoked in componentWillUpdate() life-cycle hook (initially developed to support ReactNative animation)
+//   componentDidUpdateHook: PropTypes.func     // OPTIONAL: invoked in componentDidUpdate() life-cycle hook (initially developed to support ReactNative animation)
 //   namedDependencies: PropTypes.object        // OPTIONAL: object containing named dependencies to be injected into to routeCB() function call ... ex: <StateRouter namedDependencies={{fassets, api}}/>
 // };
 
