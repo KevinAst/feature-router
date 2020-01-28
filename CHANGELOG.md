@@ -11,12 +11,14 @@ and **contains migration instructions**.
 
 Release  | What                                            | *When*
 ---------|-------------------------------------------------|------------------
+[v3.0.0] | Configuration at Construction Time              | *January, xx, 2020*
 [v1.0.1] | Address Security Alerts                         | *December 10, 2019*
 [v1.0.0] | feature-u V1 Integration                        | *August 14, 2018*
 [v0.1.3] | Establish Polyfill Strategy                     | *July 2, 2018*
 [v0.1.1] | react-native android patch                      | *March 7, 2018*
 [v0.1.0] | Initial Release                                 | *March 6, 2018*
 
+[v3.0.0]: #v300---configuration-at-construction-time-january-xx-2020
 [v1.0.1]: #v101---address-security-alerts-december-10-2019
 [v1.0.0]: #v100---feature-u-v1-integration-august-14-2018
 [v0.1.3]: #v013---establish-polyfill-strategy-july-2-2018
@@ -52,6 +54,34 @@ RUNNING CONTENT (pop out as needed) ...
 
 
 UNRELEASED ******************************************************************************** -->
+
+
+<!-- *** RELEASE *************************************************************** -->
+
+## v3.0.0 - Configuration at Construction Time *(January, xx, 2020)*
+
+[GitHub Content](https://github.com/KevinAst/feature-router/tree/v3.0.0)
+&bull;
+[GitHub Release](https://github.com/KevinAst/feature-router/releases/tag/v3.0.0)
+&bull;
+[Diff](https://github.com/KevinAst/feature-router/compare/v1.0.1...v3.0.0)
+
+
+**NOTE**: ?? This release is a **non-breaking change** _(i.e. no API was affected)_.
+
+**NOTE**: ?? This release contains **breaking changes** from prior
+releases.  _A retrofit of client code is necessary_.
+?? This release does in fact introduce breaking changes (due to configuration now occurring at construction time).
+
+- Pardon the version bump (from v1.0.1 to v3.0.0).  We skipped v2
+  strictly as an internal management convenience - to match the
+  current **feature-u** version _(which is also v3.0.0)_.
+
+- **More**: ??
+
+- **Security**: ?? Address potential security vulnerabilities in
+  dependent libs (mostly devDependencies completely unrelated to
+  deployment)!
 
 
 <!-- *** RELEASE *************************************************************** -->

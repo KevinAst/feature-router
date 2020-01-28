@@ -1,6 +1,6 @@
 {
   "name": "feature-router",
-  "version": "1.0.1",
+  "version": "3.0.0",
   "description": "Feature Based Navigation (using redux state)",
   "main": "lib/index.js",
   "browser": {
