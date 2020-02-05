@@ -62,9 +62,6 @@ for [feature-u].
   * [Route Priorities]
   * [Feature Order and Routes](#feature-order-and-routes)
   * [Routing Precedence](#routing-precedence)
-- [Configuration](#configuration)
-  * [fallbackElm$](#fallbackelm)
-  * [componentDidUpdateHook$](#componentdidupdatehook)
 - [Interface Points](#interface-points)
   * [Input](#input)
   * [Exposure](#exposure)
@@ -115,8 +112,9 @@ Polyfills](#potential-need-for-polyfills))_.
    [`routeAspect`] _(see: `**1**`)_ to **feature-u**'s
    [`launchApp()`].
 
-   **Please note** that [`routeAspect`] has a required [config.fallbackElm$
-   configuration item](#fallbackelm) _(see: `**2**`)_.
+   **Please note** that [`routeAspect`] has a required `fallbackElm`
+   parameter _(see: `**2**`)_ that specifies a reactElm to use when no
+   routes are in effect _(a SplashScreen of sorts)_.
 
    **Also note** that [redux] must be present in your run-time stack,
    because the routes ultimately analyze state managed by [redux] _(see:
@@ -130,15 +128,16 @@ Polyfills](#potential-need-for-polyfills))_.
    import SplashScreen           from '~/util/comp/SplashScreen';
    import features               from './feature';
 
-   // configure Aspects (as needed) // **2**
-   const routeAspect = createRouteAspect();
-   routeAspect.config.fallbackElm$ = <SplashScreen msg="I'm trying to think but it hurts!"/>;
-
    export default launchApp({
 
      aspects: [
-       routeAspect,                 // **1**
-       createReducerAspect(),       // **3**
+
+       createRouteAspect({     // **1** and **2**
+         fallbackElm: <SplashScreen msg="I'm trying to think but it hurts!"/>
+       }),
+
+       createReducerAspect(),  // **3**
+
        ... other Aspects here
      ],
 
@@ -382,54 +381,6 @@ redirects to a login screen if the user is not authenticated.  **Very
 natural and goof-proof!!!**
 
 
-## Configuration
-
-### fallbackElm$
-
-`routeAspect.config.fallbackElm$` (**REQUIRED**):
-
-Before you can use [`routeAspect`] you must first configure the
-`fallbackElm$` representing a SplashScreen _(of sorts)_ when no routes
-are in effect.  Simply set it as follows:
-
-```js
-import {createRouteAspect} from 'feature-router';
-import SplashScreen        from './wherever/SplashScreen';
-
-const routeAspect = createRouteAspect();
-
-...
-routeAspect.config.fallbackElm$ = <SplashScreen msg="I'm trying to think but it hurts!"/>;
-...
-```
-
-This configuration is **required**, because it would be problematic
-for **feature-router** to devise a default.  For one thing, it doesn't
-know your app layout. But more importantly, it doesn't know the [react]
-platform in use _(ex: [react-web], [react-native], [expo], etc.)_.
-
-
-### componentDidUpdateHook$
-
-`routeAspect.config.componentDidUpdateHook$` (**OPTIONAL**):
-
-You can optionally specify a `<StateRouter>` componentDidUpdate
-life-cycle hook (a function that, when defined, will be invoked during
-the componentDidUpdate react life-cycle phase).  _This was initially
-introduced in support of [react-native] animation._ Simply set it as
-follows:
-
-```js
-import {createRouteAspect} from 'feature-router';
-import {LayoutAnimation}   from 'react-native';
-
-const routeAspect = createRouteAspect();
-
-...
-routeAspect.config.componentDidUpdateHook$ = () => LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-...
-```
-
 ## Interface Points
 
 **feature-router** accumulates all the routes from the various
@@ -457,17 +408,6 @@ and outputs_) are documented here.
   Communication].
 
 ### Error Conditions
-
-- **Required Configuration**
-
-  If you fail to configure the required [fallbackElm$](#fallbackelm),
-  the following exception will be thrown:
-
-  ```
-  launchApp() parameter violation: 
-  the route aspect requires config.fallbackElm$ to be configured (at run-time)!
-  ```
-
 
 - **routeAspect Placement** _(Aspect Order)_
 
@@ -500,15 +440,16 @@ and outputs_) are documented here.
   Most likely this should in fact be considered an error _(for example
   you neglected to specify the routes within your features)_.  **The
   reasoning is**: _why would you not specify any routes if your using
-  feature-router?_
+  **feature-router**?_
 
-  You can change this behavior through the following configuration:
+  You can change this behavior by specifying the `allowNoRoutes` constructor
+  parameter _(see: [`routeAspect: Aspect`](#routeaspect-aspect))_:
 
   ```js
-  routeAspect.config.allowNoRoutes$ = true;
+  createRouteAspect({allowNoRoutes:true})
   ```
 
-  With this option enabled, when no routes are found, feature-router
+  With this option enabled, when no routes are found, **feature-router**
   will simply NOT be configured (accompanied with a WARNING logging
   probe).
 
@@ -524,20 +465,58 @@ and outputs_) are documented here.
 
 <ul><!--- indentation hack for github - other attempts with style is stripped (be careful with number bullets) ---> 
 
-`API: createRouteAspect([name='route']): routeAspect`
+```
+API: createRouteAspect({name:'route',
+                        fallbackElm,
+                        componentDidUpdateHook,
+                        allowNoRoutes:false}): routeAspect
+```
 
 The `routeAspect` is the [feature-u] plugin that facilitates
 **Feature Route** integration to your features.
 
-To use this aspect:
+**PARAMS**: _(**Please Note**: only named parameters are used)_
 
-- Within your mainline:
+- **name**: The name of this Aspect Plugin (defaults to 'route')
 
-  - configure the `routeAspect.config.fallbackElm$` representing a
-    SplashScreen (of sorts) when no routes are in effect.
+- **fallbackElm**: The required reactElm to render when no routes
+  are in effect _(a SplashScreen of sorts)_.
 
-  - register the **feature-router** `routeAspect` to **feature-u**'s
-    [`launchApp()`].
+  This is **required**, because it would be problematic for
+  **feature-router** to devise a default.  For one thing, it doesn't
+  know your app layout. But more importantly, it doesn't know the
+  [react] platform in use _(ex: [react-web], [react-native], [expo],
+  etc.)_.
+
+- **componentDidUpdateHook**: an optional `<StateRouter>`
+  componentDidUpdate life-cycle hook.  When defined, it is a function
+  that is invoked during the componentDidUpdate react life-cycle
+  phase.  _This was initially introduced in support of [react-native]
+  animation ... **for example**:_
+
+  ```js
+  import {createRouteAspect} from 'feature-router';
+  import {LayoutAnimation}   from 'react-native';
+  
+  createRouteAspect({
+    ... other params (snip snip)
+    componentDidUpdateHook: () => LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+  });
+  ```
+
+- **allowNoRoutes**: an optional boolean expression that determines
+  how to handle the situation where **NO Routes** were found in the
+  active feature set ... please refer to the **NO Routes in Features**
+  discussion in [Error Conditions](#error-conditions).
+
+
+**USAGE**:
+
+- Within your mainline, register the **feature-router**
+  `routeAspect` to **feature-u**'s [`launchApp()`].
+
+  The `fallbackElm` constructor parameter is required, and represents
+  a SplashScreen (of sorts) when no routes are in effect.
 
 - Within each feature that maintains UI Components, simply register
   the feature's route through the `Feature.route` property _(using
@@ -721,7 +700,7 @@ implemented)_ is intended to address this issue.
 <!--- *** REFERENCE LINKS *** ---> 
 
 <!--- **feature-router** ---> 
-[Usage]:             #usage
+[Usage]:            #usage
 [A Closer Look]:    #a-closer-look
 [Route Priorities]: #route-priorities
 [`routeAspect`]:    #routeaspect-aspect

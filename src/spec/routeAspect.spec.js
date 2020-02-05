@@ -3,7 +3,7 @@ import {createRouteAspect,
 import {createFeature}  from 'feature-u';      // peerDependency:
 import {logf}           from '../routeAspect'; // to enable logs
 
-const routeAspect = createRouteAspect();
+const routeAspect = createRouteAspect({fallbackElm: 'my simulated fallbackElm'});
 
 // enable logging ONLY to insure NO run-time errors in our logging probes
 logf.enable();
@@ -23,33 +23,102 @@ describe('routeAspect() tests', () => {
   // *** --------------------------------------------------------------------------------
   describe('validate createRouteAspect() parameter violation', () => {
 
-    expect( () => createRouteAspect(null) )
-      .toThrow(/name is required/);
-    // THROW: createRouteAspect() parameter violation: name is required
+    test('(null)', () => {
+      expect( () => createRouteAspect(null) )
+        .toThrow(/only named parameters may be supplied/);
+      // THROW: createRouteAspect() parameter violation: only named parameters may be supplied
+    });
 
-    expect( () => createRouteAspect(123) )
-      .toThrow(/name must be a string/);
-    // THROW: createRouteAspect() parameter violation: name must be a string
+    test('(123)', () => {
+      expect( () => createRouteAspect(123) )
+        .toThrow(/only named parameters may be supplied/);
+      // THROW: createRouteAspect() parameter violation: only named parameters may be supplied
+    });
+
+    test('({name:null})', () => {
+      expect( () => createRouteAspect({name:null}) )
+        .toThrow(/name is required/);
+      // THROW: createRouteAspect() parameter violation: name is required
+    });
+
+    test('({name:123})', () => {
+      expect( () => createRouteAspect({name:123}) )
+        .toThrow(/name must be a string/);
+      // THROW: createRouteAspect() parameter violation: name must be a string
+    });
+
+    test("({name:'myRouter'}, 123)", () => {
+      expect( () => createRouteAspect({name:'myRouter'}, 123) )
+        .toThrow(/name:myRouter.*only named parameters can be specified.*2 positional parameters were found/);
+      // THROW: createRouteAspect() parameter violation: name:myRouter ... unrecognized positional parameters (only named parameters can be specified) ... 2 positional parameters were found
+    });
+
+    test("({name:'myRouter', badParam1:1, badParam2:2})", () => {
+      expect( () => createRouteAspect({name:'myRouter', badParam1:1, badParam2:2}) )
+        .toThrow(/name:myRouter.*unrecognized named parameter.*badParam1,badParam2/);
+      // THROW: createRouteAspect() parameter violation: name:myRouter ... unrecognized named parameter(s): badParam1,badParam2
+    });
+
+    test("({})", () => {
+      expect( () => createRouteAspect({}) )
+        .toThrow(/name:route.*fallbackElm is required/);
+      // THROW: createRouteAspect() parameter violation: name:route ... fallbackElm is required (a reactElm)
+    });
+
+    test("({fallbackElm:'simFallbackElm', componentDidUpdateHook:123})", () => {
+      expect( () => createRouteAspect({fallbackElm:'simFallbackElm', componentDidUpdateHook:123}) )
+        .toThrow(/name:route.*componentDidUpdateHook must be a function/);
+      // THROW: createRouteAspect() parameter violation: name:route ... componentDidUpdateHook must be a function (when supplied)
+    });
+
+    test("({fallbackElm:'simFallbackElm', componentDidUpdateHook:(p)=>p})", () => {
+      expect( () => createRouteAspect({fallbackElm:'simFallbackElm', componentDidUpdateHook:(p)=>p}) )
+        .not.toThrow();
+    });
+
+    test("({fallbackElm:'simFallbackElm', allowNoRoutes: 123})", () => {
+      expect( () => createRouteAspect({fallbackElm:'simFallbackElm', allowNoRoutes: 123}) )
+        .toThrow(/name:route.*allowNoRoutes must be a boolean -or- an array of routes/);
+      // THROW: createRouteAspect() parameter violation: name:route ... allowNoRoutes must be a boolean -or- an array of routes
+    });
+
+    test("({fallbackElm:'simFallbackElm', allowNoRoutes: false})", () => {
+      expect( () => createRouteAspect({fallbackElm:'simFallbackElm', allowNoRoutes: false}) )
+        .not.toThrow();
+    });
+
+    test("({fallbackElm:'simFallbackElm', allowNoRoutes: true})", () => {
+      expect( () => createRouteAspect({fallbackElm:'simFallbackElm', allowNoRoutes: true}) )
+        .not.toThrow();
+    });
+
+    test("({fallbackElm:'simFallbackElm', allowNoRoutes: [1,2]})", () => {
+      expect( () => createRouteAspect({fallbackElm:'simFallbackElm', allowNoRoutes: [1,2]}) )
+        .not.toThrow();
+    });
 
   });
-
+  
 
   // *** --------------------------------------------------------------------------------
-  describe('genesis()', () => {
-
-    test('config.fallbackElm$ supplied', () => {
-      routeAspect.config.fallbackElm$ = 'my simulated fallbackElm';
-      expect(routeAspect.genesis())
-        .toBe(null);
-    });
-
-    test('requires config.fallbackElm$ to be configured', () => {
-      routeAspect.config.fallbackElm$ = null;
-      expect(routeAspect.genesis())
-        .toMatch(/aspect requires config.fallbackElm/);
-    });
-
-  });
+  // ?? obsolete?
+  //? describe('genesis()', () => {
+  //? 
+  //?   // ?? obsolete?
+  //?   test('config.fallbackElm$ supplied', () => {
+  //?     routeAspect.config.fallbackElm$ = 'my simulated fallbackElm';
+  //?     expect(routeAspect.genesis())
+  //?       .toBe(null);
+  //?   });
+  //? 
+  //?   // ?? obsolete?
+  //?   test('requires config.fallbackElm$ to be configured', () => {
+  //?     routeAspect.config.fallbackElm$ = null;
+  //?     expect(routeAspect.genesis())
+  //?       .toMatch(/aspect requires config.fallbackElm/);
+  //?   });
+  //? 
+  //? });
 
 
   // *** --------------------------------------------------------------------------------

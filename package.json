@@ -1,6 +1,6 @@
 {
   "name": "feature-router",
-  "version": "1.0.1",
+  "version": "3.0.0",
   "description": "Feature Based Navigation (using redux state)",
   "main": "lib/index.js",
   "browser": {
@@ -104,7 +104,8 @@
     "webpack": "^2.4.1"
   },
   "dependencies": {
-    "lodash.isfunction": "^3.0.8"
+    "lodash.isfunction": "^3.0.8",
+    "lodash.isplainobject": "^4.0.6"
   },
   "peerDependencies": {
     "feature-u": ">=1.0.0",
