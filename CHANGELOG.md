@@ -11,14 +11,14 @@ and **contains migration instructions**.
 
 Release  | What                                            | *When*
 ---------|-------------------------------------------------|------------------
-[v3.0.0] | Configuration at Construction Time              | *January, xx, 2020*
+[v3.0.0] | Configuration at Construction Time              | *February, 5, 2020*
 [v1.0.1] | Address Security Alerts                         | *December 10, 2019*
 [v1.0.0] | feature-u V1 Integration                        | *August 14, 2018*
 [v0.1.3] | Establish Polyfill Strategy                     | *July 2, 2018*
 [v0.1.1] | react-native android patch                      | *March 7, 2018*
 [v0.1.0] | Initial Release                                 | *March 6, 2018*
 
-[v3.0.0]: #v300---configuration-at-construction-time-january-xx-2020
+[v3.0.0]: #v300---configuration-at-construction-time-february-5-2020
 [v1.0.1]: #v101---address-security-alerts-december-10-2019
 [v1.0.0]: #v100---feature-u-v1-integration-august-14-2018
 [v0.1.3]: #v013---establish-polyfill-strategy-july-2-2018
@@ -58,7 +58,7 @@ UNRELEASED *********************************************************************
 
 <!-- *** RELEASE *************************************************************** -->
 
-## v3.0.0 - Configuration at Construction Time *(January, xx, 2020)*
+## v3.0.0 - Configuration at Construction Time *(February, 5, 2020)*
 
 [GitHub Content](https://github.com/KevinAst/feature-router/tree/v3.0.0)
 &bull;
@@ -81,8 +81,6 @@ releases.  _A trivial retrofit of client code is necessary_.
   To retrofit your code, simply move any `routeAspect.config.xyz` item into
   the corresponding `createRouteAspect()` parameter.
   _(see [API](./README.md#routeaspect-aspect))_.
-
-- **More**: ??
 
 
 <!-- *** RELEASE *************************************************************** -->
