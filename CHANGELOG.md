@@ -68,7 +68,7 @@ UNRELEASED *********************************************************************
 
 
 **NOTE**: This release contains **minor breaking changes** from prior
-releases.  _A minor retrofit of client code is necessary_.
+releases.  _A trivial retrofit of client code is necessary_.
 
 - Pardon the version bump (from v1.0.1 to v3.0.0).  We skipped v2
   strictly as an internal management convenience - to match the
