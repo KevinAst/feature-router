@@ -67,15 +67,20 @@ UNRELEASED *********************************************************************
 [Diff](https://github.com/KevinAst/feature-router/compare/v1.0.1...v3.0.0)
 
 
-**NOTE**: ?? This release is a **non-breaking change** _(i.e. no API was affected)_.
-
-**NOTE**: ?? This release contains **breaking changes** from prior
-releases.  _A retrofit of client code is necessary_.
-?? This release does in fact introduce breaking changes (due to configuration now occurring at construction time).
+**NOTE**: This release contains **minor breaking changes** from prior
+releases.  _A minor retrofit of client code is necessary_.
 
 - Pardon the version bump (from v1.0.1 to v3.0.0).  We skipped v2
   strictly as an internal management convenience - to match the
   current **feature-u** version _(which is also v3.0.0)_.
+
+- **Changed**: The `createRouteAspect()` creator function now
+  accepts only named parameters _(see [API](./README.md#routeaspect-aspect))_.
+
+- **Changed**: All configuration/validation now occurs at construction time.
+  To retrofit your code, simply move any `routeAspect.config.xyz` item into
+  the corresponding `createRouteAspect()` parameter.
+  _(see [API](./README.md#routeaspect-aspect))_.
 
 - **More**: ??
 

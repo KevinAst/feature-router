@@ -4,57 +4,77 @@ import {createAspect,
 import StateRouter             from './StateRouter';
 import verify                  from './util/verify';
 import isFunction              from 'lodash.isfunction';
+import isPlainObject           from 'lodash.isplainobject';
 
 // our logger (integrated/activated via feature-u)
 export const logf = launchApp.diag.logf.newLogger('- ***feature-router*** routeAspect: ');
 
 // NOTE: See README for complete description
-export default function createRouteAspect(name='route') {
+export default function createRouteAspect(namedParams={}) {
 
-  // validate parameters
+  // ***
+  // *** validate parameters
+  // ***
+
   const check = verify.prefix('createRouteAspect() parameter violation: ');
 
-  check(name,                      'name is required');
-  check(typeof name === 'string',  'name must be a string'); // NOTE: didn't want to introduce lodash.isstring dependancy (in the mix of everything else going on in the 1.0.0 upgrade)
+  // ... namedParams
+  check(isPlainObject(namedParams), 'only named parameters may be supplied');
 
-  // create/promote our new aspect
+  // descturcture our individual namedParams
+  // ... NOTE: We do this here (rather in the function signature) to have access
+  //           to the overall namedParams variable - for validation purposes!
+  //           Access via the JavaScript implicit `arguments[0]` variable is 
+  //           NOT reliable (in this context) exhibiting a number of quirks :-(
+  const {name='route',
+         fallbackElm,            // fallback reactElm when NO routes are in effect (REQUIRED CONFIGURATION)
+         componentDidUpdateHook, // componentDidUpdateHook(): void ... invoked during react componentDidUpdate() life-cycle (OPTIONAL)
+         allowNoRoutes=false,    // what to do if NO Feature.route's found ... false: ERROR (default), true: allow, routes[]: use specified array of routes
+         ...unknownNamedArgs} = namedParams;
+
+  // ... name (NOTE: name check takes precedence to facilitate `Aspect.name` identity in subsequent errors :-)
+  check(name,                      'name is required');
+  check(typeof name === 'string',  'name must be a string'); // NOTE: didn't want to introduce lodash.isstring dependency (in the mix of everything else going on in the 1.0.0 upgrade)
+
+  // ... unrecognized positional parameter
+  //     NOTE: when defaulting entire struct, arguments.length is 0
+  check(arguments.length <= 1, `name:${name} ... unrecognized positional parameters (only named parameters can be specified) ... ${arguments.length} positional parameters were found`);
+
+  // ... unrecognized named parameter
+  const unknownArgKeys = Object.keys(unknownNamedArgs);
+  check(unknownArgKeys.length === 0,  `name:${name} ... unrecognized named parameter(s): ${unknownArgKeys}`);
+
+  // ... fallbackElm
+  check(fallbackElm, `name:${name} ... fallbackElm is required (a reactElm)`);
+  // AI: check fallbackElm is a reactElm
+
+  // ... componentDidUpdateHook
+  if (componentDidUpdateHook) {
+    check(isFunction(componentDidUpdateHook), `name:${name} ... componentDidUpdateHook must be a function (when supplied)`);
+  }
+
+  // ... allowNoRoutes
+  check(allowNoRoutes===true ||
+        allowNoRoutes===false ||
+        Array.isArray(allowNoRoutes), `name:${name} ... allowNoRoutes must be a boolean -or- an array of routes`);
+
+
+  // ***
+  // *** create/promote our new aspect
+  // ***
+
   const routeAspect = createAspect({
     name,
-    genesis,
     validateFeatureContent,
     assembleFeatureContent,
     initialRootAppElm,
     config: {
-      fallbackElm$:             null,  // PUBLIC: reactElm ... fallback when NO routes are in effect (REQUIRED CONFIGURATION)
-      componentDidUpdateHook$: null,  // PUBLIC: componentDidUpdateHook$(): void ... invoked during react componentDidUpdate() life-cycle (OPTIONAL)
-      allowNoRoutes$:           false, // PUBLIC: client override to: true || [{routes}]
+      fallbackElm$:            fallbackElm,
+      componentDidUpdateHook$: componentDidUpdateHook,
+      allowNoRoutes$:          allowNoRoutes,
     },
   });
   return routeAspect;
-}
-
-
-/**
- * Validate self's required configuration.
- *
- * ALSO: Register feature-router proprietary Aspect APIs (required to pass
- * feature-u validation).
- * This must occur early in the life-cycle (i.e. this method) to
- * guarantee the new API is available during feature-u validation.
- *
- * NOTE: To better understand the context in which any returned
- *       validation messages are used, feature-u will prefix them
- *       with: 'launchApp() parameter violation: '
- *
- * @return {string} an error message when self is in an invalid state
- * (falsy when valid).
- *
- * @private
- */
-function genesis() {
-  // validation
-  logf('genesis() validating required config.fallbackElm$');
-  return this.config.fallbackElm$ ? null : `the ${this.name} aspect requires config.fallbackElm$ to be configured (at run-time)!`;
 }
 
 
@@ -193,7 +213,7 @@ function initialRootAppElm(fassets, curRootAppElm) {
     return curRootAppElm;
   }
 
-  // insure we don't clober any supplied content
+  // insure we don't clobber any supplied content
   // ... by design, <StateRouter> doesn't support children
   if (curRootAppElm) {
     throw new Error('***ERROR*** Please register routeAspect (from feature-router) before other Aspects ' +
