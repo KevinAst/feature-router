@@ -84,10 +84,6 @@ releases.  _A trivial retrofit of client code is necessary_.
 
 - **More**: ??
 
-- **Security**: ?? Address potential security vulnerabilities in
-  dependent libs (mostly devDependencies completely unrelated to
-  deployment)!
-
 
 <!-- *** RELEASE *************************************************************** -->
 
